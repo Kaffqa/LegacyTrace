@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '../../lib/api'
 import { Package, Plus, Edit2, Trash2, X, Search } from 'lucide-react'
+import { ImageUploader } from '../../components/ImageUploader'
 
 interface Product {
     id: number; name: string; category: string; village: string; imageUrl: string; description: string; umkm: string; umkmStory: string; culturalValue: string; ethicalBadges: string; artisanId: number | null
@@ -168,7 +169,6 @@ export const AdminProducts = () => {
                                 {[
                                     { label: 'Nama Produk', key: 'name' },
                                     { label: 'Desa / Lokasi', key: 'village' },
-                                    { label: 'URL Gambar', key: 'imageUrl' },
                                     { label: 'UMKM', key: 'umkm' },
                                 ].map(f => (
                                     <div key={f.key}>
@@ -180,6 +180,7 @@ export const AdminProducts = () => {
                                         />
                                     </div>
                                 ))}
+                                <ImageUploader label="Gambar Produk" value={form.imageUrl} onChange={url => setForm({ ...form, imageUrl: url })} />
                                 <div>
                                     <label className="block text-sm font-medium text-charcoal dark:text-dark-body mb-1">Kategori</label>
                                     <select

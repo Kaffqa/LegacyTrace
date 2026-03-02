@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '../../lib/api'
 import { Plus, Edit2, Trash2, X, Search, Users } from 'lucide-react'
+import { ImageUploader } from '../../components/ImageUploader'
 
 interface Artisan {
     id: number; name: string; specialty: string; location: string; quote: string; quoteLocal: string; photoUrl: string; yearsExperience: number; culturalBackground: string
@@ -99,7 +100,6 @@ export const AdminArtisans = () => {
                                 {[
                                     { label: 'Nama', key: 'name' },
                                     { label: 'Lokasi', key: 'location' },
-                                    { label: 'URL Foto', key: 'photoUrl' },
                                     { label: 'Pengalaman (tahun)', key: 'yearsExperience', type: 'number' },
                                     { label: 'Background Budaya', key: 'culturalBackground' },
                                 ].map(f => (
@@ -108,6 +108,7 @@ export const AdminArtisans = () => {
                                         <input type={f.type || 'text'} value={(form as any)[f.key]} onChange={e => setForm({ ...form, [f.key]: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-warm-sand dark:bg-night-card border border-stone-100 dark:border-night-border text-ink dark:text-dark-heading focus:ring-2 focus:ring-gold/50 outline-none text-sm" />
                                     </div>
                                 ))}
+                                <ImageUploader label="Foto Pengrajin" value={form.photoUrl} onChange={url => setForm({ ...form, photoUrl: url })} />
                                 <div>
                                     <label className="block text-sm font-medium text-charcoal dark:text-dark-body mb-1">Spesialisasi</label>
                                     <select value={form.specialty} onChange={e => setForm({ ...form, specialty: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-warm-sand dark:bg-night-card border border-stone-100 dark:border-night-border text-ink dark:text-dark-heading focus:ring-2 focus:ring-gold/50 outline-none text-sm">

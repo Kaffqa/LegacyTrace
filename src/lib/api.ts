@@ -48,6 +48,21 @@ class ApiClient {
         if (!res.ok) throw new Error((await res.json()).error || res.statusText)
         return res.json()
     }
+
+    async upload(file: File): Promise<{ url: string }> {
+        const formData = new FormData()
+        formData.append('file', file)
+        const h: HeadersInit = {}
+        const token = this.getToken()
+        if (token) h['Authorization'] = `Bearer ${token}`
+        const res = await fetch(`${API_BASE}/upload`, {
+            method: 'POST',
+            headers: h,
+            body: formData
+        })
+        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
+        return res.json()
+    }
 }
 
 export const api = new ApiClient()

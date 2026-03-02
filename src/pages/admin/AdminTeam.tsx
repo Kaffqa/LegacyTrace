@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '../../lib/api'
 import { Plus, Edit2, Trash2, X, Search } from 'lucide-react'
+import { ImageUploader } from '../../components/ImageUploader'
 
 interface TeamMember {
     id: number; name: string; role: string; position: string; bio: string; image: string; email: string; phone: string; instagram: string; expertise: string; experience: number; quote: string
@@ -91,7 +92,6 @@ export const AdminTeam = () => {
                                     { label: 'Nama', key: 'name' },
                                     { label: 'Role', key: 'role' },
                                     { label: 'Posisi', key: 'position' },
-                                    { label: 'URL Foto', key: 'image' },
                                     { label: 'Email', key: 'email' },
                                     { label: 'Telepon', key: 'phone' },
                                     { label: 'Instagram', key: 'instagram' },
@@ -103,6 +103,7 @@ export const AdminTeam = () => {
                                         <input type={(f as any).type || 'text'} value={(form as any)[f.key]} onChange={e => setForm({ ...form, [f.key]: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-warm-sand dark:bg-night-card border border-stone-100 dark:border-night-border text-ink dark:text-dark-heading focus:ring-2 focus:ring-gold/50 outline-none text-sm" />
                                     </div>
                                 ))}
+                                <ImageUploader label="Foto Anggota" value={form.image} onChange={url => setForm({ ...form, image: url })} />
                                 {[{ label: 'Bio', key: 'bio' }, { label: 'Kutipan', key: 'quote' }].map(f => (
                                     <div key={f.key}>
                                         <label className="block text-sm font-medium text-charcoal dark:text-dark-body mb-1">{f.label}</label>
