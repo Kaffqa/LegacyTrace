@@ -5,7 +5,7 @@ import { Plus, Edit2, Trash2, X, Search, Users } from 'lucide-react'
 import { ImageUploader } from '../../components/ImageUploader'
 
 interface Artisan {
-    id: number; name: string; specialty: string; location: string; quote: string; quoteLocal: string; photoUrl: string; yearsExperience: number; culturalBackground: string
+    id: number; name: string; specialty: string; location: string; quote: string; quoteLocal: string; photoUrl: string; yearsExperience: number; culturalBackground: string; whatsapp?: string
 }
 
 export const AdminArtisans = () => {
@@ -14,7 +14,7 @@ export const AdminArtisans = () => {
     const [search, setSearch] = useState('')
     const [editing, setEditing] = useState<Artisan | null>(null)
     const [showForm, setShowForm] = useState(false)
-    const [form, setForm] = useState({ name: '', specialty: 'batik', location: '', quote: '', quoteLocal: '', photoUrl: '', yearsExperience: '', culturalBackground: '' })
+    const [form, setForm] = useState({ name: '', specialty: 'batik', location: '', quote: '', quoteLocal: '', photoUrl: '', yearsExperience: '', culturalBackground: '', whatsapp: '' })
 
     const load = () => {
         api.get<Artisan[]>('/artisans').then(setItems).catch(console.error).finally(() => setLoading(false))
@@ -23,13 +23,13 @@ export const AdminArtisans = () => {
 
     const openNew = () => {
         setEditing(null)
-        setForm({ name: '', specialty: 'batik', location: '', quote: '', quoteLocal: '', photoUrl: '', yearsExperience: '', culturalBackground: '' })
+        setForm({ name: '', specialty: 'batik', location: '', quote: '', quoteLocal: '', photoUrl: '', yearsExperience: '', culturalBackground: '', whatsapp: '' })
         setShowForm(true)
     }
 
     const openEdit = (a: Artisan) => {
         setEditing(a)
-        setForm({ name: a.name, specialty: a.specialty, location: a.location, quote: a.quote || '', quoteLocal: a.quoteLocal || '', photoUrl: a.photoUrl || '', yearsExperience: a.yearsExperience?.toString() || '', culturalBackground: a.culturalBackground || '' })
+        setForm({ name: a.name, specialty: a.specialty, location: a.location, quote: a.quote || '', quoteLocal: a.quoteLocal || '', photoUrl: a.photoUrl || '', yearsExperience: a.yearsExperience?.toString() || '', culturalBackground: a.culturalBackground || '', whatsapp: a.whatsapp || '' })
         setShowForm(true)
     }
 
@@ -102,6 +102,7 @@ export const AdminArtisans = () => {
                                     { label: 'Lokasi', key: 'location' },
                                     { label: 'Pengalaman (tahun)', key: 'yearsExperience', type: 'number' },
                                     { label: 'Background Budaya', key: 'culturalBackground' },
+                                    { label: 'WhatsApp (cth: 6281234567890)', key: 'whatsapp' },
                                 ].map(f => (
                                     <div key={f.key}>
                                         <label className="block text-sm font-medium text-charcoal dark:text-dark-body mb-1">{f.label}</label>

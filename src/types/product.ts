@@ -21,6 +21,7 @@ export interface Artisan {
     photoUrl: string
     yearsExperience: number
     culturalBackground: string
+    whatsapp?: string | null
     createdAt?: string
     updatedAt?: string
 }
@@ -32,7 +33,9 @@ export interface Review {
     userId: number | string
     productId: number | string
     createdAt?: string
+    updatedAt?: string
     user?: { id: number | string; name: string }
+    product?: { name: string }
 }
 
 export interface Product {

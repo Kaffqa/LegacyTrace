@@ -3,11 +3,13 @@ import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { BackgroundShapes } from '../components/BackgroundShapes'
 import { HeroVisual } from '../components/HeroVisual'
+import { api } from '../lib/api'
+import { Review } from '../types/product'
 import {
   Search, ShieldCheck, QrCode, Users,
   Palette, Utensils, Hammer, Scissors,
   Coffee, Leaf, ArrowRight, Map, BookOpen,
-  Heart, Handshake, Sparkles, Award, MapPin
+  Heart, Handshake, Sparkles, Award, MapPin, Star
 } from 'lucide-react'
 
 /* ── Animated Counter Hook (rAF-based) ── */
@@ -63,7 +65,28 @@ const StatCounter = ({ value, suffix, label, delay }: { value: number; suffix: s
   )
 }
 
+interface PlatformStats {
+  totalProducts: number
+  totalArtisans: number
+  totalRegions: number
+  totalCategories: number
+  totalReviews: number
+  averageRating: number
+}
+
 export const Home = () => {
+  const [stats, setStats] = useState<PlatformStats | null>(null)
+  const [featuredReviews, setFeaturedReviews] = useState<Review[]>([])
+  const [reviewsLoading, setReviewsLoading] = useState(true)
+
+  useEffect(() => {
+    api.get<PlatformStats>('/stats').then(setStats).catch(console.error)
+    api.get<Review[]>('/reviews/featured')
+      .then(setFeaturedReviews)
+      .catch(console.error)
+      .finally(() => setReviewsLoading(false))
+  }, [])
+
 
   const features = [
     {
@@ -206,7 +229,7 @@ export const Home = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <HeroVisual />
+            <HeroVisual stats={stats} />
           </motion.div>
         </motion.div>
       </section>
@@ -218,10 +241,13 @@ export const Home = () => {
         <div className="section-divider" />
         <div className="max-w-5xl mx-auto px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCounter value={500} suffix="+" label="Produk" delay={0} />
-            <StatCounter value={100} suffix="+" label="Artisan" delay={0.1} />
-            <StatCounter value={10} suffix="" label="Region" delay={0.2} />
-            <StatCounter value={6} suffix="" label="Kategori" delay={0.3} />
+            <StatCounter value={stats?.totalProducts ?? 0} suffix="+" label="Produk" delay={0} />
+            <StatCounter value={stats?.totalArtisans ?? 0} suffix="+" label="Artisan" delay={0.1} />
+            <StatCounter value={stats?.totalRegions ?? 0} suffix="" label="Region" delay={0.2} />
+            <StatCounter value={stats?.totalCategories ?? 0} suffix="" label="Kategori" delay={0.3} />
+            {(stats?.totalReviews ?? 0) > 0 && (
+              <StatCounter value={stats?.averageRating ?? 0} suffix="/5" label="Rating" delay={0.4} />
+            )}
           </div>
         </div>
         <div className="section-divider" />
@@ -429,42 +455,65 @@ export const Home = () => {
           <p className="text-stone-text dark:text-dark-muted max-w-xl mx-auto">Cerita dan testimoni dari mereka yang sudah bergabung bersama LegacyTrace.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-          {[
-            { quote: 'Produk UMKM berkualitas tinggi dengan cerita yang menginspirasi!', author: 'Dewi S.', role: 'Pembeli Setia', avatar: '🌸' },
-            { quote: 'Platform ini benar-benar membantu kami jangkau pasar yang lebih luas.', author: 'Pak Santoso', role: 'Artisan Batik', avatar: '🎨' },
-            { quote: 'Saya senang belajar tentang proses produksi yang ethical dan sustainable.', author: 'Budi M.', role: 'Conscious Consumer', avatar: '🌿' }
-          ].map((testimonial, idx) => (
-            <motion.div
-              key={idx}
-              className="glass rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border-l-4 border-gold dark:border-gold-neon card-hover group relative"
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.6 }}
-              whileHover={{ y: -6 }}
-            >
-              {/* Large quote mark */}
-              <div className="absolute top-4 right-6 text-5xl font-serif text-gold/10 dark:text-gold-neon/10 leading-none">"</div>
+        {reviewsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="glass rounded-2xl p-8 border-l-4 border-gold/30 dark:border-gold-neon/30 animate-pulse">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, j) => (
+                    <div key={j} className="w-4 h-4 rounded bg-gold/20 dark:bg-gold-neon/20" />
+                  ))}
+                </div>
+                <div className="h-4 bg-stone-200 dark:bg-night-border rounded mb-2 w-full" />
+                <div className="h-4 bg-stone-200 dark:bg-night-border rounded mb-6 w-3/4" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-stone-200 dark:bg-night-border" />
+                  <div>
+                    <div className="h-3 bg-stone-200 dark:bg-night-border rounded w-20 mb-1" />
+                    <div className="h-3 bg-stone-200 dark:bg-night-border rounded w-16" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            {(featuredReviews.length > 0 ? featuredReviews.slice(0, 3) : [
+              { id: 'f1', rating: 5, comment: 'Produk UMKM berkualitas tinggi dengan cerita yang menginspirasi!', user: { id: 0, name: 'Dewi S.' }, product: { name: 'Pembeli Setia' } },
+              { id: 'f2', rating: 5, comment: 'Platform ini benar-benar membantu kami jangkau pasar yang lebih luas.', user: { id: 0, name: 'Pak Santoso' }, product: { name: 'Artisan Batik' } },
+              { id: 'f3', rating: 5, comment: 'Saya senang belajar tentang proses produksi yang ethical dan sustainable.', user: { id: 0, name: 'Budi M.' }, product: { name: 'Conscious Consumer' } },
+            ] as Review[]).map((review, idx) => (
+              <motion.div
+                key={review.id}
+                className="glass rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border-l-4 border-gold dark:border-gold-neon card-hover group relative"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1, duration: 0.6 }}
+                whileHover={{ y: -6 }}
+              >
+                {/* Large quote mark */}
+                <div className="absolute top-4 right-6 text-5xl font-serif text-gold/10 dark:text-gold-neon/10 leading-none">"</div>
 
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-base text-gold dark:text-gold-neon">★</span>
-                ))}
-              </div>
-              <p className="text-charcoal dark:text-dark-body italic mb-6 relative z-10">"{testimonial.quote}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gold-soft dark:bg-gold-glow-bg flex items-center justify-center text-lg">
-                  {testimonial.avatar}
+                <div className="flex gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <Star key={star} className={`w-4 h-4 ${star <= review.rating ? 'text-gold dark:text-gold-neon fill-current' : 'text-stone-200 dark:text-night-border'}`} />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-bold text-ink dark:text-dark-heading text-sm">{testimonial.author}</p>
-                  <p className="text-xs text-teal dark:text-teal-neon font-medium">{testimonial.role}</p>
+                <p className="text-charcoal dark:text-dark-body italic mb-6 relative z-10">"{review.comment}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-teal dark:from-gold-neon dark:to-teal-neon flex items-center justify-center text-lg">
+                    <span className="text-sm font-bold text-white">{review.user?.name?.charAt(0) || '?'}</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-ink dark:text-dark-heading text-sm">{review.user?.name || 'Anonim'}</p>
+                    <p className="text-xs text-teal dark:text-teal-neon font-medium">Review: {review.product?.name || 'Produk'}</p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </motion.section>
 
       {/* ═══════════════════════════════════

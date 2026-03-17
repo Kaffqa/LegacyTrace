@@ -4,6 +4,13 @@ import {
     ShieldCheck, QrCode, Heart, Search
 } from 'lucide-react'
 
+interface HeroVisualProps {
+    stats?: {
+        totalProducts: number
+        totalArtisans: number
+    } | null
+}
+
 /* ── Orbiting category icons ── */
 const orbitItems = [
     { icon: <Palette className="w-5 h-5" />, label: 'Batik', color: 'text-cat-batik dark:text-cat-batik-dark', bg: 'bg-purple-50 dark:bg-purple-950/40' },
@@ -14,14 +21,14 @@ const orbitItems = [
     { icon: <Leaf className="w-5 h-5" />, label: 'Herbal', color: 'text-cat-herbal dark:text-cat-herbal-dark', bg: 'bg-green-50 dark:bg-green-950/40' },
 ]
 
-/* ── Floating stat mini-cards ── */
-const floatingCards = [
-    { value: '500+', label: 'Produk', icon: <QrCode className="w-4 h-4" />, x: '8%', y: '12%', delay: 0 },
-    { value: '100+', label: 'Artisan', icon: <Heart className="w-4 h-4" />, x: '72%', y: '8%', delay: 0.3 },
-    { value: '100%', label: 'Transparan', icon: <ShieldCheck className="w-4 h-4" />, x: '68%', y: '76%', delay: 0.6 },
-]
+export const HeroVisual = ({ stats }: HeroVisualProps) => {
+    /* ── Floating stat mini-cards (dynamic from API) ── */
+    const floatingCards = [
+        { value: stats ? `${stats.totalProducts}+` : '...', label: 'Produk', icon: <QrCode className="w-4 h-4" />, x: '8%', y: '12%', delay: 0 },
+        { value: stats ? `${stats.totalArtisans}+` : '...', label: 'Artisan', icon: <Heart className="w-4 h-4" />, x: '72%', y: '8%', delay: 0.3 },
+        { value: '100%', label: 'Transparan', icon: <ShieldCheck className="w-4 h-4" />, x: '68%', y: '76%', delay: 0.6 },
+    ]
 
-export const HeroVisual = () => {
     const orbitRadius = 140
     const centerX = 50 // percent
     const centerY = 50 // percent

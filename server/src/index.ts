@@ -10,6 +10,7 @@ import teamRoutes from './routes/team.routes.js'
 import quizRoutes from './routes/quiz.routes.js'
 import dashboardRoutes from './routes/dashboard.routes.js'
 import uploadRoutes from './routes/upload.routes.js'
+import statsRoutes from './routes/stats.routes.js'
 
 dotenv.config()
 
@@ -35,6 +36,7 @@ app.use('/api/team', teamRoutes)
 app.use('/api/quiz', quizRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/stats', statsRoutes)
 
 // Health check
 app.get('/api/health', (_req, res) => {

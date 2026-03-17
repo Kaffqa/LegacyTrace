@@ -1,13 +1,14 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { api } from '../lib/api'
-import { Product } from '../types/product'
+import { Product, Review } from '../types/product'
+import { useAuth } from '../contexts/AuthContext'
 import { TimelineStep } from '../components/TimelineStep'
 import { BackgroundShapes } from '../components/BackgroundShapes'
 import {
   MapPin, Check, BookOpen, Leaf, Hammer, Hand,
-  Award, Clock, Quote, Sparkles, ArrowRight, Star
+  Award, Clock, Quote, Sparkles, ArrowRight, Star, MessageCircle, Pencil
 } from 'lucide-react'
 
 export const Passport = () => {
@@ -16,6 +17,76 @@ export const Passport = () => {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set())
+  const { user } = useAuth()
+
+  // Rating form state
+  const [hoverRating, setHoverRating] = useState(0)
+  const [selectedRating, setSelectedRating] = useState(0)
+  const [reviewComment, setReviewComment] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewError, setReviewError] = useState('')
+  const [reviewSuccess, setReviewSuccess] = useState(false)
+
+  // Edit review state
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingReviewId, setEditingReviewId] = useState<number | string | null>(null)
+
+  const userReview = product?.reviews?.find(r => r.userId === user?.id) ?? null
+  const userHasReviewed = !!userReview
+
+  const refreshProduct = useCallback(() => {
+    if (!productId) return
+    api.get<Product>(`/products/${productId}`).then(setProduct).catch(() => {})
+  }, [productId])
+
+  const handleSubmitReview = async () => {
+    if (!selectedRating || !reviewComment.trim()) {
+      setReviewError('Pilih rating dan tulis komentar')
+      return
+    }
+    setSubmittingReview(true)
+    setReviewError('')
+    try {
+      if (isEditing && editingReviewId) {
+        // Edit existing review
+        await api.put(`/reviews/${editingReviewId}`, { rating: selectedRating, comment: reviewComment.trim() })
+        setReviewSuccess(true)
+        setIsEditing(false)
+        setEditingReviewId(null)
+      } else {
+        // Create new review
+        await api.post('/reviews', { rating: selectedRating, comment: reviewComment.trim(), productId: parseInt(productId!) })
+        setReviewSuccess(true)
+      }
+      setSelectedRating(0)
+      setReviewComment('')
+      refreshProduct()
+      setTimeout(() => setReviewSuccess(false), 3000)
+    } catch (err: any) {
+      setReviewError(err.message || 'Gagal mengirim review')
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
+  const handleStartEdit = () => {
+    if (userReview) {
+      setSelectedRating(userReview.rating)
+      setReviewComment(userReview.comment)
+      setEditingReviewId(userReview.id)
+      setIsEditing(true)
+      setReviewError('')
+      setReviewSuccess(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditing(false)
+    setEditingReviewId(null)
+    setSelectedRating(0)
+    setReviewComment('')
+    setReviewError('')
+  }
 
   useEffect(() => {
     if (!productId) { navigate('/products'); return }
@@ -59,6 +130,7 @@ export const Passport = () => {
   const artisanQuote = product.artisan?.quote || product.artisanQuote || ''
   const artisanQuoteLocal = product.artisan?.quoteLocal || product.artisanQuoteLocal || ''
   const artisanPhotoUrl = product.artisan?.photoUrl || product.artisanPhotoUrl || ''
+  const artisanWhatsapp = product.artisan?.whatsapp || ''
   const steps = product.supplySteps || product.steps || []
 
   return (
@@ -326,6 +398,21 @@ export const Passport = () => {
                     <Leaf className="w-3 h-3" /> Tradisional
                   </span>
                 </div>
+
+                {/* WhatsApp Contact Button */}
+                {artisanWhatsapp && (
+                  <motion.a
+                    href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace. Apakah produk ini masih tersedia?`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300"
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Hubungi via WhatsApp
+                  </motion.a>
+                )}
               </div>
 
               {/* Right: Quote & Details */}
@@ -375,6 +462,201 @@ export const Passport = () => {
             </div>
           </div>
         </div>
+      </motion.section>
+
+      {/* ═══════════════════════════════════
+          RATING & REVIEWS SECTION
+         ═══════════════════════════════════ */}
+      <motion.section
+        className="max-w-6xl mx-auto px-8 py-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* Average Rating Summary */}
+        {product.reviews && product.reviews.length > 0 && (() => {
+          const avgRating = product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+          return (
+            <div className="glass rounded-2xl p-8 mb-8 text-center border border-stone-100/60 dark:border-night-border/60">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-4xl font-serif font-bold text-gold dark:text-gold-neon">{avgRating.toFixed(1)}</span>
+                <span className="text-lg text-stone-text dark:text-dark-muted">/5</span>
+              </div>
+              <div className="flex justify-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <Star key={star} className={`w-5 h-5 ${star <= Math.round(avgRating) ? 'text-gold dark:text-gold-neon fill-current' : 'text-stone-200 dark:text-night-border'}`} />
+                ))}
+              </div>
+              <p className="text-sm text-stone-text dark:text-dark-muted">Berdasarkan {product.reviews.length} ulasan</p>
+            </div>
+          )
+        })()}
+
+        {/* Rating Form — new review or edit mode */}
+        {user && (!userHasReviewed || isEditing) ? (
+          <motion.div
+            className="glass rounded-2xl p-8 mb-8 border border-stone-100/60 dark:border-night-border/60"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-serif font-bold text-ink dark:text-dark-heading flex items-center gap-2">
+                <Star className="w-5 h-5 text-gold dark:text-gold-neon" /> {isEditing ? 'Edit Review' : 'Beri Rating'}
+              </h3>
+              {isEditing && (
+                <motion.button
+                  onClick={handleCancelEdit}
+                  className="text-sm text-stone-text dark:text-dark-muted hover:text-coral dark:hover:text-coral-neon transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Batal
+                </motion.button>
+              )}
+            </div>
+
+            {/* Star Selector */}
+            <div className="flex gap-2 mb-5">
+              {[1, 2, 3, 4, 5].map(star => (
+                <motion.button
+                  key={star}
+                  onClick={() => setSelectedRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  className="p-1 focus:outline-none"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Star className={`w-8 h-8 transition-colors duration-200 ${
+                    star <= (hoverRating || selectedRating)
+                      ? 'text-gold dark:text-gold-neon fill-current'
+                      : 'text-stone-200 dark:text-night-border'
+                  }`} />
+                </motion.button>
+              ))}
+              {selectedRating > 0 && (
+                <span className="ml-2 text-sm text-stone-text dark:text-dark-muted self-center">
+                  {selectedRating === 1 && 'Kurang'}
+                  {selectedRating === 2 && 'Cukup'}
+                  {selectedRating === 3 && 'Baik'}
+                  {selectedRating === 4 && 'Sangat Baik'}
+                  {selectedRating === 5 && 'Luar Biasa!'}
+                </span>
+              )}
+            </div>
+
+            {/* Comment */}
+            <textarea
+              value={reviewComment}
+              onChange={e => setReviewComment(e.target.value)}
+              placeholder="Tulis ulasan Anda tentang produk ini..."
+              rows={3}
+              className="w-full px-4 py-3 rounded-xl bg-warm-sand dark:bg-night-card border border-stone-100 dark:border-night-border text-ink dark:text-dark-heading placeholder-muted-text focus:ring-2 focus:ring-gold/50 outline-none text-sm resize-none mb-4"
+            />
+
+            {reviewError && (
+              <p className="text-sm text-coral dark:text-coral-neon mb-3">{reviewError}</p>
+            )}
+            {reviewSuccess && (
+              <p className="text-sm text-teal dark:text-teal-neon mb-3">✓ Review berhasil {isEditing ? 'diperbarui' : 'dikirim'}!</p>
+            )}
+
+            <motion.button
+              onClick={handleSubmitReview}
+              disabled={submittingReview}
+              className="px-6 py-3 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-300 disabled:opacity-50 btn-glow"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {submittingReview ? 'Mengirim...' : isEditing ? 'Simpan Perubahan' : 'Kirim Review'}
+            </motion.button>
+          </motion.div>
+        ) : user && userHasReviewed && !isEditing ? (
+          /* Show user's existing review with Edit button */
+          <motion.div
+            className="glass rounded-2xl p-8 mb-8 border border-gold/20 dark:border-gold-neon/20"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-serif font-bold text-ink dark:text-dark-heading flex items-center gap-2">
+                <Star className="w-5 h-5 text-gold dark:text-gold-neon" /> Review Anda
+              </h3>
+              <motion.button
+                onClick={handleStartEdit}
+                className="flex items-center gap-1.5 px-4 py-2 bg-gold/10 dark:bg-gold-neon/10 text-gold dark:text-gold-neon rounded-lg text-sm font-semibold hover:bg-gold/20 dark:hover:bg-gold-neon/20 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Pencil className="w-4 h-4" /> Edit
+              </motion.button>
+            </div>
+            <div className="flex gap-1 mb-3">
+              {[1, 2, 3, 4, 5].map(star => (
+                <Star key={star} className={`w-5 h-5 ${star <= userReview!.rating ? 'text-gold dark:text-gold-neon fill-current' : 'text-stone-200 dark:text-night-border'}`} />
+              ))}
+              <span className="ml-2 text-sm text-stone-text dark:text-dark-muted">{userReview!.rating}/5</span>
+            </div>
+            <p className="text-stone-text dark:text-dark-body leading-relaxed">{userReview!.comment}</p>
+            {userReview!.updatedAt && userReview!.updatedAt !== userReview!.createdAt && (
+              <p className="text-xs text-stone-text/60 dark:text-dark-muted/60 mt-3 italic">Diedit pada {new Date(userReview!.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            )}
+          </motion.div>
+        ) : !user ? (
+          <div className="glass rounded-2xl p-8 mb-8 text-center border border-stone-100/60 dark:border-night-border/60">
+            <p className="text-stone-text dark:text-dark-muted mb-4">Masuk untuk memberikan rating dan ulasan</p>
+            <Link to="/login">
+              <motion.button
+                className="px-6 py-3 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-xl shadow-lg btn-glow"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Masuk
+              </motion.button>
+            </Link>
+          </div>
+        ) : null}
+
+        {/* Reviews List */}
+        {product.reviews && product.reviews.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-xl font-serif font-bold text-ink dark:text-dark-heading mb-4">Ulasan Produk ({product.reviews.length})</h3>
+            {product.reviews.map(review => (
+              <motion.div
+                key={review.id}
+                className="glass rounded-2xl p-6 border border-stone-100/60 dark:border-night-border/60"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-teal dark:from-gold-neon dark:to-teal-neon flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">{review.user?.name?.charAt(0) || '?'}</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-ink dark:text-dark-heading text-sm">{review.user?.name || 'Anonim'}</p>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <Star key={star} className={`w-3.5 h-3.5 ${star <= review.rating ? 'text-gold dark:text-gold-neon fill-current' : 'text-stone-200 dark:text-night-border'}`} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {review.createdAt && (
+                    <span className="text-xs text-stone-text dark:text-dark-muted">
+                      {new Date(review.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-stone-text dark:text-dark-body leading-relaxed">{review.comment}</p>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </motion.section>
 
       {/* ═══════════════════════════════════
