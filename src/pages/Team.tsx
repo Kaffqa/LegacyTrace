@@ -11,7 +11,19 @@ export const Team = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     api.get<TeamMember[]>('/team')
-      .then(setTeamMembers)
+      .then(data => {
+        const parsed = data.map(m => {
+          let exp: any[] = []
+          const rawExp = (m as any).expertise;
+          if (Array.isArray(rawExp)) exp = rawExp
+          else if (typeof rawExp === 'string') {
+            try { exp = JSON.parse(rawExp) }
+            catch { exp = rawExp.split(',').map((s: string) => s.trim()).filter(Boolean) }
+          }
+          return { ...m, expertise: exp }
+        })
+        setTeamMembers(parsed)
+      })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])

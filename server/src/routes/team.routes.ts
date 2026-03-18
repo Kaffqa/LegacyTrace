@@ -19,6 +19,12 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
 router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const data = { ...req.body }
+        if (typeof data.expertise === 'string') {
+            try { data.expertise = JSON.parse(data.expertise) }
+            catch { data.expertise = data.expertise.split(',').map((s: string) => s.trim()).filter(Boolean) }
+        }
+        if (data.expertise !== undefined && !Array.isArray(data.expertise)) data.expertise = []
+        
         // expertise is stored as native Json in PostgreSQL
         const member = await prisma.teamMember.create({ data })
         res.status(201).json(member)
@@ -32,6 +38,12 @@ router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: Respo
 router.put('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const data = { ...req.body }
+        if (typeof data.expertise === 'string') {
+            try { data.expertise = JSON.parse(data.expertise) }
+            catch { data.expertise = data.expertise.split(',').map((s: string) => s.trim()).filter(Boolean) }
+        }
+        if (data.expertise !== undefined && !Array.isArray(data.expertise)) data.expertise = []
+
         // expertise is stored as native Json in PostgreSQL
         const member = await prisma.teamMember.update({
             where: { id: parseInt(req.params.id as string) },

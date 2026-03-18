@@ -5,7 +5,7 @@ import { Plus, Edit2, Trash2, X, Search } from 'lucide-react'
 import { ImageUploader } from '../../components/ImageUploader'
 
 interface TeamMember {
-    id: number; name: string; role: string; position: string; bio: string; image: string; email: string; phone: string; instagram: string; expertise: string; experience: number; quote: string
+    id: number; name: string; role: string; position: string; bio: string; image: string; email: string; phone: string; instagram: string; expertise: any; experience: number; quote: string
 }
 
 export const AdminTeam = () => {
@@ -24,13 +24,22 @@ export const AdminTeam = () => {
     const openNew = () => { setEditing(null); setForm({ name: '', role: '', position: '', bio: '', image: '', email: '', phone: '', instagram: '', expertise: '', experience: '', quote: '' }); setShowForm(true) }
     const openEdit = (t: TeamMember) => {
         setEditing(t)
-        setForm({ name: t.name, role: t.role, position: t.position, bio: t.bio || '', image: t.image || '', email: t.email || '', phone: t.phone || '', instagram: t.instagram || '', expertise: t.expertise || '', experience: t.experience?.toString() || '', quote: t.quote || '' })
+        const expStr = Array.isArray(t.expertise) ? t.expertise.join(', ') : (typeof t.expertise === 'string' ? t.expertise : '')
+        setForm({ name: t.name, role: t.role, position: t.position, bio: t.bio || '', image: t.image || '', email: t.email || '', phone: t.phone || '', instagram: t.instagram || '', expertise: expStr, experience: t.experience?.toString() || '', quote: t.quote || '' })
         setShowForm(true)
     }
 
     const handleSave = async () => {
         try {
-            const data = { ...form, experience: Number(form.experience) || 0 }
+            let parsedExpertise: string[] = []
+            try {
+                parsedExpertise = typeof form.expertise === 'string' && form.expertise.startsWith('[') 
+                    ? JSON.parse(form.expertise) 
+                    : form.expertise.split(',').map(s => s.trim()).filter(Boolean)
+            } catch {
+                parsedExpertise = []
+            }
+            const data = { ...form, experience: Number(form.experience) || 0, expertise: parsedExpertise }
             if (editing) await api.put(`/team/${editing.id}`, data)
             else await api.post('/team', data)
             setShowForm(false); load()
@@ -96,7 +105,7 @@ export const AdminTeam = () => {
                                     { label: 'Telepon', key: 'phone' },
                                     { label: 'Instagram', key: 'instagram' },
                                     { label: 'Pengalaman (tahun)', key: 'experience', type: 'number' },
-                                    { label: 'Keahlian (JSON)', key: 'expertise' },
+                                    { label: 'Keahlian (pisahkan koma)', key: 'expertise' },
                                 ].map(f => (
                                     <div key={f.key}>
                                         <label className="block text-sm font-medium text-charcoal dark:text-dark-body mb-1">{f.label}</label>
