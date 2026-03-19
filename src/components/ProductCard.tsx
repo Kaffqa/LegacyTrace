@@ -7,17 +7,6 @@ interface ProductCardProps {
   selectedCategory?: string
 }
 
-const getCategoryColor = (category: string) => {
-  const colors = {
-    batik: 'bg-cat-batik/15 text-cat-batik dark:bg-cat-batik-dark/20 dark:text-cat-batik-dark hover:bg-cat-batik dark:hover:bg-cat-batik-dark',
-    makanan: 'bg-coral/15 text-coral dark:bg-cat-food-dark/20 dark:text-cat-food-dark hover:bg-coral dark:hover:bg-cat-food-dark',
-    kerajinan: 'bg-cat-craft/15 text-cat-craft dark:bg-cat-craft-dark/20 dark:text-cat-craft-dark hover:bg-cat-craft dark:hover:bg-cat-craft-dark',
-    tenun: 'bg-cat-weave/15 text-cat-weave dark:bg-cat-weave-dark/20 dark:text-cat-weave-dark hover:bg-cat-weave dark:hover:bg-cat-weave-dark',
-    gerabah: 'bg-cat-pottery/15 text-cat-pottery dark:bg-cat-pottery-dark/20 dark:text-cat-pottery-dark hover:bg-cat-pottery dark:hover:bg-cat-pottery-dark',
-    herbal: 'bg-cat-herbal/15 text-cat-herbal dark:bg-cat-herbal-dark/20 dark:text-cat-herbal-dark hover:bg-cat-herbal dark:hover:bg-cat-herbal-dark'
-  }
-  return colors[category as keyof typeof colors] || colors.kerajinan
-}
 
 export const ProductCard = ({ product, selectedCategory }: ProductCardProps) => {
   const passportLink = selectedCategory && selectedCategory !== 'all'
@@ -54,8 +43,8 @@ export const ProductCard = ({ product, selectedCategory }: ProductCardProps) => 
             {(Array.isArray(product.ethicalBadges) ? product.ethicalBadges : []).map((badge, idx) => (
               <motion.span
                 key={idx}
-                className={`${getCategoryColor(product.category)} px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:text-white hover:scale-110 shadow-md`}
-                whileHover={{ scale: 1.1, y: -2 }}
+                className="bg-cream/90 dark:bg-night-card/90 backdrop-blur-md text-gold-deep dark:text-gold-neon font-semibold rounded-full border border-gold/50 dark:border-gold-neon/50 px-3 py-1 text-xs transition-all duration-300 hover:bg-gold hover:text-white dark:hover:bg-gold-neon dark:hover:text-night hover:scale-105 shadow-sm"
+                whileHover={{ scale: 1.05, y: -2 }}
               >
                 {badge}
               </motion.span>

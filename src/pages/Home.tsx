@@ -17,11 +17,13 @@ function useCounter(end: number, durationMs: number = 2000) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
   const hasAnimated = useRef(false)
-
   useEffect(() => {
+    // allow re-animation when real data arrives
+    if (end > 0) hasAnimated.current = false;
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
+        if (entry.isIntersecting && !hasAnimated.current && end > 0) {
           hasAnimated.current = true
           const start = performance.now()
           const tick = (now: number) => {
@@ -91,7 +93,7 @@ export const Home = () => {
   const features = [
     {
       icon: <Search className="w-7 h-7" />,
-      title: 'Rantai Pasokan Transparan',
+      title: 'Rantai Pasok',
       desc: 'Lihat perjalanan lengkap dari setiap produk dari artisan hingga ke tangan Anda.',
       color: 'text-gold dark:text-gold-neon',
       bg: 'bg-gold-soft dark:bg-gold-glow-bg'
@@ -100,32 +102,32 @@ export const Home = () => {
       icon: <Users className="w-7 h-7" />,
       title: 'Kerajinan Etis',
       desc: 'Dukung perdagangan adil dan komunitas artisan. Setiap pembelian memberdayakan pengrajin.',
-      color: 'text-coral dark:text-coral-neon',
-      bg: 'bg-coral-soft dark:bg-coral-glow-bg'
+      color: 'text-gold dark:text-gold-neon',
+      bg: 'bg-gold-soft dark:bg-gold-glow-bg'
     },
     {
       icon: <QrCode className="w-7 h-7" />,
       title: 'Paspor Digital',
       desc: 'Setiap produk memiliki paspor digital interaktif yang menceritakan kisah uniknya.',
-      color: 'text-teal dark:text-teal-neon',
-      bg: 'bg-teal-soft dark:bg-teal-glow-bg'
+      color: 'text-gold dark:text-gold-neon',
+      bg: 'bg-gold-soft dark:bg-gold-glow-bg'
     },
     {
       icon: <BookOpen className="w-7 h-7" />,
       title: 'Kisah Artisan',
       desc: 'Temui para pembuat di balik produk. Dengarkan kisah hidup, passion, dan budaya mereka.',
-      color: 'text-cat-batik dark:text-cat-batik-dark',
-      bg: 'bg-purple-50 dark:bg-purple-950/30'
+      color: 'text-gold dark:text-gold-neon',
+      bg: 'bg-gold-soft dark:bg-gold-glow-bg'
     }
   ]
 
   const categories = [
-    { icon: <Palette className="w-8 h-8" />, name: 'Batik', desc: 'Pola batik tulis tradisional', color: 'text-cat-batik dark:text-cat-batik-dark', bg: 'bg-purple-50 dark:bg-purple-950/20' },
-    { icon: <Utensils className="w-8 h-8" />, name: 'Makanan', desc: 'Kuliner lokal autentik', color: 'text-coral dark:text-coral-neon', bg: 'bg-coral-soft dark:bg-coral-glow-bg' },
-    { icon: <Hammer className="w-8 h-8" />, name: 'Kerajinan', desc: 'Artefak budaya buatan tangan', color: 'text-teal dark:text-teal-neon', bg: 'bg-teal-soft dark:bg-teal-glow-bg' },
-    { icon: <Scissors className="w-8 h-8" />, name: 'Tenun', desc: 'Tenunan tekstil rumit', color: 'text-cat-weave dark:text-cat-weave-dark', bg: 'bg-indigo-50 dark:bg-indigo-950/20' },
+    { icon: <Palette className="w-8 h-8" />, name: 'Batik', desc: 'Pola batik tulis tradisional', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' },
+    { icon: <Utensils className="w-8 h-8" />, name: 'Makanan', desc: 'Kuliner lokal autentik', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' },
+    { icon: <Hammer className="w-8 h-8" />, name: 'Kerajinan', desc: 'Artefak budaya buatan tangan', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' },
+    { icon: <Scissors className="w-8 h-8" />, name: 'Tenun', desc: 'Tenunan tekstil rumit', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' },
     { icon: <Coffee className="w-8 h-8" />, name: 'Gerabah', desc: 'Kreasi keramik artisan', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' },
-    { icon: <Leaf className="w-8 h-8" />, name: 'Herbal', desc: 'Produk kesehatan tradisional', color: 'text-cat-herbal dark:text-cat-herbal-dark', bg: 'bg-green-50 dark:bg-green-950/20' }
+    { icon: <Leaf className="w-8 h-8" />, name: 'Herbal', desc: 'Produk kesehatan tradisional', color: 'text-cat-pottery dark:text-cat-pottery-dark', bg: 'bg-amber-50 dark:bg-amber-950/20' }
   ]
 
   const containerVariants = {
@@ -239,8 +241,8 @@ export const Home = () => {
          ═══════════════════════════════════ */}
       <section className="relative">
         <div className="section-divider" />
-        <div className="max-w-5xl mx-auto px-8 py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-6xl mx-auto px-8 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <StatCounter value={stats?.totalProducts ?? 0} suffix="+" label="Produk" delay={0} />
             <StatCounter value={stats?.totalArtisans ?? 0} suffix="+" label="Artisan" delay={0.1} />
             <StatCounter value={stats?.totalRegions ?? 0} suffix="" label="Region" delay={0.2} />
@@ -362,7 +364,7 @@ export const Home = () => {
               transition={{ delay: idx * 0.1, duration: 0.6 }}
             >
               <div className="glass rounded-2xl p-8 text-center border border-gold/10 dark:border-gold-neon/10 hover:border-gold/30 dark:hover:border-gold-neon/30 hover:shadow-xl transition-all duration-300 card-hover group">
-                <div className="w-14 h-14 bg-gradient-to-br from-gold to-teal dark:from-gold-neon dark:to-teal-neon text-white dark:text-night rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gold dark:bg-gold-neon text-white dark:text-night rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   {item.icon}
                 </div>
                 <h4 className="text-lg font-bold text-ink dark:text-dark-heading mb-2 group-hover:text-gold dark:group-hover:text-gold-neon transition-colors">{item.title}</h4>
@@ -579,7 +581,7 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-cat-batik/[0.03] to-cat-weave/[0.03] dark:from-cat-batik-dark/[0.06] dark:to-cat-weave-dark/[0.06]" />
           <div className="relative z-10">
             <motion.div
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-cat-batik to-cat-weave dark:from-cat-batik-dark dark:to-cat-weave-dark rounded-full mb-6 shadow-lg"
+              className="inline-flex items-center justify-center w-20 h-20 bg-gold dark:bg-gold-neon rounded-full mb-6 shadow-lg"
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
@@ -595,8 +597,8 @@ export const Home = () => {
 
             <div className="flex flex-wrap gap-3 justify-center mb-8">
               <span className="px-4 py-2 bg-gold-soft dark:bg-gold-glow-bg text-gold dark:text-gold-neon rounded-full text-sm font-semibold">✓ Gratis Bergabung</span>
-              <span className="px-4 py-2 bg-teal-soft dark:bg-teal-glow-bg text-teal dark:text-teal-neon rounded-full text-sm font-semibold">✓ Jangkauan Luas</span>
-              <span className="px-4 py-2 bg-coral-soft dark:bg-coral-glow-bg text-coral dark:text-coral-neon rounded-full text-sm font-semibold">✓ Transparansi Penuh</span>
+              <span className="px-4 py-2 bg-gold-soft dark:bg-gold-glow-bg text-gold dark:text-gold-neon rounded-full text-sm font-semibold">✓ Jangkauan Luas</span>
+              <span className="px-4 py-2 bg-gold-soft dark:bg-gold-glow-bg text-gold dark:text-gold-neon rounded-full text-sm font-semibold">✓ Transparansi Penuh</span>
             </div>
 
             <Link to="/partnership">

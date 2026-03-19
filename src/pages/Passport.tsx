@@ -173,7 +173,7 @@ export const Passport = () => {
               {product.name}
             </motion.h1>
             <motion.p
-              className="text-xl text-teal dark:text-teal-neon font-semibold mb-1"
+              className="text-xl text-gold-deep dark:text-gold-neon font-bold mb-1"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -198,8 +198,8 @@ export const Passport = () => {
               {product.ethicalBadges.map((badge, idx) => (
                 <motion.span
                   key={idx}
-                  className="bg-gradient-to-r from-teal to-teal-deep dark:from-teal-neon dark:to-teal-bright text-white px-3 py-1.5 rounded-full font-semibold text-xs shadow-sm flex items-center gap-1.5"
-                  whileHover={{ scale: 1.08, y: -2 }}
+                  className="bg-cream/90 dark:bg-night-card/90 backdrop-blur-md text-gold-deep dark:text-gold-neon border border-gold/50 dark:border-gold-neon/50 px-3 py-1.5 rounded-full font-semibold text-xs shadow-sm flex items-center gap-1.5 transition-all duration-300 hover:bg-gold hover:text-white dark:hover:bg-gold-neon dark:hover:text-night"
+                  whileHover={{ scale: 1.05, y: -2 }}
                 >
                   <Check className="w-3.5 h-3.5" /> {badge}
                 </motion.span>
@@ -305,160 +305,161 @@ export const Passport = () => {
       </motion.section>
 
       {/* ═══════════════════════════════════
-          ARTISAN SECTION (ENHANCED)
+          ARTISAN SECTION (PREMIUM REDESIGN)
          ═══════════════════════════════════ */}
       <motion.section
-        className="max-w-6xl mx-auto px-8 py-8 mb-8"
-        initial={{ opacity: 0, y: 20 }}
+        className="max-w-6xl mx-auto px-8 py-12 mb-12 relative"
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="glass rounded-3xl shadow-xl border border-stone-100/60 dark:border-night-border/60 overflow-hidden">
-          {/* Section Header */}
-          <div className="bg-gradient-to-r from-gold/[0.06] to-teal/[0.06] dark:from-gold-neon/[0.08] dark:to-teal-neon/[0.08] px-8 py-5 border-b border-stone-100/60 dark:border-night-border/60">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright rounded-xl flex items-center justify-center text-white">
-                <Hand className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-serif font-bold text-ink dark:text-dark-heading">Kenali Pengrajinnya</h2>
-                <p className="text-xs text-stone-text dark:text-dark-muted">Artisan di balik karya ini</p>
-              </div>
-            </div>
-          </div>
+        <div className="absolute inset-0 top-12 bottom-0 left-8 right-8 bg-gradient-to-br from-gold/5 via-transparent to-teal/5 dark:from-gold-neon/10 dark:via-transparent dark:to-teal-neon/10 rounded-[3rem] -z-10 blur-2xl" />
 
-          {/* Artisan Content */}
-          <div className="p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left: Artisan Identity */}
-              <div className="lg:col-span-1 flex flex-col items-center text-center">
-                {/* Avatar */}
+        <div className="relative rounded-3xl bg-white dark:bg-night shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.15)] border border-stone-100 dark:border-night-border/50 overflow-hidden">
+          
+          {/* Subtle Abstract Background Elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-gold/10 to-transparent dark:from-gold-neon/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#10A37F]/10 to-transparent dark:from-teal-neon/5 rounded-full blur-2xl pointer-events-none" />
+
+          {/* Optional texture layer */}
+          <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iMyIgY3k9IjMiIHI9IjMiLz48L2c+PC9zdmc+')] pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 relative z-10 w-full">
+            
+            {/* Left Column: Avatar & Quick Info */}
+            <div className="lg:col-span-4 relative p-8 lg:p-10 flex flex-col items-center justify-center text-center border-b lg:border-b-0 lg:border-r border-stone-100 dark:border-night-border/50">
+              
+              {/* Animated Avatar */}
+              <div className="relative mb-6 group cursor-default">
+                <div 
+                  className="absolute inset-0 bg-gradient-to-tr from-gold to-[#10A37F] dark:from-gold-neon dark:to-teal-neon rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-700 animate-spin"
+                  style={{ animationDuration: '20s' }}
+                />
                 <motion.div
-                  className="w-28 h-28 rounded-full overflow-hidden shadow-xl mb-5 ring-4 ring-white dark:ring-night-card bg-gradient-to-br from-gold to-teal dark:from-gold-neon dark:to-teal-neon flex items-center justify-center"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                  className="w-32 h-32 rounded-full overflow-hidden relative z-10 ring-4 ring-white dark:ring-night border border-stone-100 dark:border-night-border/50 bg-stone-50 dark:bg-night-card shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   {artisanPhotoUrl ? (
-                    <img
-                      src={artisanPhotoUrl}
-                      alt={artisanName}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                        const parent = target.parentElement
-                        if (parent) {
-                          parent.innerHTML = `<span class="text-4xl text-white font-serif font-bold">${artisanName.charAt(0)}</span>`
-                        }
-                      }}
-                    />
+                    <img src={artisanPhotoUrl} alt={artisanName} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-4xl text-white font-serif font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-5xl text-gold-deep dark:text-gold-neon font-serif font-bold">
                       {artisanName.charAt(0)}
-                    </span>
+                    </div>
                   )}
                 </motion.div>
-
-                <h3 className="text-2xl font-serif font-bold text-ink dark:text-dark-heading mb-1">{artisanName}</h3>
-                <p className="text-sm text-teal dark:text-teal-neon font-semibold mb-2">
-                  {product.category === 'batik' && 'Ahli Pembatik Tradisional'}
-                  {product.category === 'makanan' && 'Ahli Kuliner Tradisional'}
-                  {product.category === 'kerajinan' && 'Ahli Kerajinan Tradisional'}
-                  {product.category === 'tenun' && 'Ahli Penenun Tradisional'}
-                  {product.category === 'gerabah' && 'Ahli Pembuat Gerabah'}
-                  {product.category === 'herbal' && 'Ahli Herbalis Tradisional'}
-                </p>
-                <p className="text-xs text-stone-text dark:text-dark-muted mb-5">
-                  📍 {product.village}
-                </p>
-
-                {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-3 w-full">
-                  <div className="bg-gold-soft dark:bg-gold-glow-bg rounded-xl p-3 text-center">
-                    <Clock className="w-5 h-5 text-gold dark:text-gold-neon mx-auto mb-1" />
-                    <p className="text-xl font-bold text-gold dark:text-gold-neon">{artisanExperience}+</p>
-                    <p className="text-xs text-stone-text dark:text-dark-muted">Tahun</p>
+                
+                {/* Floating Artisan Badge */}
+                <motion.div 
+                  className="absolute -bottom-1 -right-1 bg-white dark:bg-night rounded-full p-1.5 shadow-lg border border-stone-100 dark:border-night-border z-20"
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright rounded-full flex items-center justify-center text-white">
+                    <Award className="w-4 h-4" />
                   </div>
-                  <div className="bg-teal-soft dark:bg-teal-glow-bg rounded-xl p-3 text-center">
-                    <Award className="w-5 h-5 text-teal dark:text-teal-neon mx-auto mb-1" />
-                    <p className="text-xl font-bold text-teal dark:text-teal-neon">Ahli</p>
-                    <p className="text-xs text-stone-text dark:text-dark-muted">Level</p>
-                  </div>
-                </div>
-
-                {/* Badge Tags */}
-                <div className="flex flex-wrap gap-2 mt-4 justify-center">
-                  <span className="px-3 py-1 bg-gold/10 dark:bg-gold-neon/10 text-gold dark:text-gold-neon rounded-full text-xs font-semibold flex items-center gap-1">
-                    <Star className="w-3 h-3" /> Terampil
-                  </span>
-                  <span className="px-3 py-1 bg-teal/10 dark:bg-teal-neon/10 text-teal dark:text-teal-neon rounded-full text-xs font-semibold flex items-center gap-1">
-                    <Leaf className="w-3 h-3" /> Tradisional
-                  </span>
-                </div>
-
-                {/* WhatsApp Contact Button */}
-                {artisanWhatsapp && (
-                  <motion.a
-                    href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace. Apakah produk ini masih tersedia?`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300"
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    Hubungi via WhatsApp
-                  </motion.a>
-                )}
+                </motion.div>
               </div>
 
-              {/* Right: Quote & Details */}
-              <div className="lg:col-span-2 flex flex-col justify-center">
-                {/* Artisan Bio */}
-                <div className="mb-6 p-4 bg-gradient-to-r from-cream to-gold-soft/30 dark:from-night-card/50 dark:to-gold-glow-bg/20 rounded-xl border-l-4 border-gold dark:border-gold-neon">
-                  <h4 className="text-sm font-semibold text-gold dark:text-gold-neon mb-2 flex items-center gap-2">
-                    <Award className="w-4 h-4" /> Tentang Pengrajin
-                  </h4>
-                  <p className="text-sm text-stone-text dark:text-dark-body leading-relaxed">
-                    {artisanName} adalah pengrajin berpengalaman dengan lebih dari {artisanExperience} tahun dedikasi dalam melestarikan warisan budaya Indonesia.
-                    Keahlian dan ketekunan beliau telah menghasilkan karya-karya berkualitas tinggi yang menggabungkan teknik tradisional dengan sentuhan artistik yang unik.
-                  </p>
-                </div>
+              <h3 className="text-xl font-serif font-bold text-ink dark:text-dark-heading mb-1.5">{artisanName}</h3>
+              <p className="text-xs font-bold tracking-wider uppercase text-[#10A37F] dark:text-teal-neon mb-4">
+                  {product.category === 'batik' ? 'Ahli Pembatik Tradisional' :
+                   product.category === 'makanan' ? 'Ahli Kuliner Tradisional' :
+                   product.category === 'kerajinan' ? 'Ahli Kerajinan Tradisional' :
+                   product.category === 'tenun' ? 'Ahli Penenun Tradisional' :
+                   product.category === 'gerabah' ? 'Ahli Pembuat Gerabah' :
+                   product.category === 'herbal' ? 'Ahli Herbalis Tradisional' : 'Pengrajin Ahli'}
+              </p>
+              
+              <div className="inline-flex items-center gap-1.5 text-stone-text dark:text-dark-muted text-xs mb-8 bg-stone-50/80 dark:bg-night-card/50 px-3 py-1.5 rounded-full border border-stone-200/50 dark:border-night-border/50 backdrop-blur-sm">
+                <MapPin className="w-3.5 h-3.5 text-coral dark:text-coral-neon" />
+                <span className="font-medium">{product.village}</span>
+              </div>
 
-                {/* Main Quote */}
-                <div className="relative mb-6">
-                  <Quote className="w-10 h-10 text-gold/20 dark:text-gold-neon/20 absolute -top-2 -left-2" />
-                  <blockquote className="pl-8 text-xl italic text-ink dark:text-dark-heading leading-relaxed font-serif">
-                    "{artisanQuote}"
-                  </blockquote>
-                  <p className="text-right text-sm text-stone-text dark:text-dark-muted mt-2 pr-2">
-                    — {artisanName}
-                  </p>
+              {/* Minimal Stats Layout */}
+              <div className="flex gap-3 w-full mb-8 max-w-xs">
+                <div className="flex-1 bg-gradient-to-b from-[#FAF8F5] to-white dark:from-night-card/30 dark:to-night-card/10 p-4 rounded-2xl border border-stone-100 dark:border-night-border hover:shadow-sm transition-shadow">
+                  <p className="text-2xl font-bold text-gold-deep dark:text-gold-neon mb-1">{artisanExperience}<span className="text-lg">+</span></p>
+                  <p className="text-[9px] font-bold text-stone-text/70 dark:text-dark-muted uppercase tracking-wider">Tahun Nyata</p>
                 </div>
+                <div className="flex-1 bg-gradient-to-b from-[#F2FBF8] to-white dark:from-teal-900/10 dark:to-night-card/10 p-4 rounded-2xl border border-stone-100 dark:border-night-border hover:shadow-sm transition-shadow">
+                  <p className="text-2xl font-bold text-[#10A37F] dark:text-teal-neon mb-1 mt-0.5"><Sparkles className="w-5 h-5 mx-auto" /></p>
+                  <p className="text-[9px] font-bold text-stone-text/70 dark:text-dark-muted uppercase tracking-wider mt-1.5">{product.category === 'batik' ? 'Maestro' : 'Ahli'}</p>
+                </div>
+              </div>
 
-                {/* Local Quote */}
-                {artisanQuoteLocal && (
-                  <motion.div
-                    className="bg-gradient-to-r from-teal-soft/60 to-gold-soft/40 dark:from-teal-glow-bg/50 dark:to-gold-glow-bg/30 rounded-xl p-5 border-l-4 border-teal dark:border-teal-neon mb-6"
-                    initial={{ opacity: 0, x: -10 }}
+              {/* Soft WhatsApp CTA */}
+              {artisanWhatsapp && (
+                <motion.a
+                  href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full relative group rounded-xl overflow-hidden block"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="absolute inset-0 bg-[#10A37F] opacity-[0.85] group-hover:opacity-100 transition-opacity duration-300 dark:bg-emerald-600" />
+                  <div className="relative flex items-center justify-center gap-2 px-5 py-3 text-white">
+                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm font-semibold tracking-wide">Hubungi WhatsApp</span>
+                    <ArrowRight className="w-3 h-3 opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                  </div>
+                </motion.a>
+              )}
+            </div>
+
+            {/* Right Column: Editorial Bio & Quotes */}
+            <div className="lg:col-span-8 p-8 lg:p-10 xl:p-14 flex flex-col justify-center h-full">
+              
+              {/* Top Section: Quotes */}
+              <div className="flex flex-col xl:flex-row gap-6 lg:gap-8 mb-8">
+                
+                {/* Highlight Quote Box */}
+                <div className="relative flex-1">
+                  <Quote className="w-14 h-14 text-gold-deep/[0.08] dark:text-gold-neon/[0.08] absolute -top-6 -left-4 transform -rotate-6" />
+                  <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
+                    transition={{ delay: 0.3, duration: 0.8 }}
+                    className="relative z-10"
                   >
-                    <div className="flex items-center gap-2 mb-2">
-                      <Sparkles className="w-4 h-4 text-teal dark:text-teal-neon" />
-                      <p className="text-sm text-teal dark:text-teal-neon font-semibold">Dalam Bahasa Lokal:</p>
-                    </div>
-                    <blockquote className="text-base italic text-ink dark:text-dark-body leading-relaxed font-serif">
-                      "{artisanQuoteLocal}"
+                    <h4 className="text-[10px] font-bold text-gold-deep dark:text-gold-neon uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
+                      <span className="w-6 h-[2px] bg-gold-deep dark:bg-gold-neon mix-blend-multiply dark:mix-blend-screen" /> Visi Artisan
+                    </h4>
+                    <blockquote className="text-xl lg:text-3xl font-serif italic text-ink dark:text-dark-heading leading-[1.4] tracking-tight">
+                      "{artisanQuote}"
                     </blockquote>
                   </motion.div>
-                )}
-
-
+                </div>
               </div>
+
+              {/* Elegant Text Divider */}
+              <div className="w-full h-px bg-gradient-to-r from-stone-200 via-stone-100 to-transparent dark:from-night-border dark:via-night-border/50 mb-8" />
+
+              {/* Bottom Section: Bio Paragraph */}
+              <motion.div 
+                className="prose prose-stone dark:prose-invert max-w-none text-stone-text dark:text-dark-body text-sm lg:text-base leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                   <div className="flex flex-col">
+                       <h5 className="font-serif text-lg font-bold text-ink dark:text-dark-heading tracking-wide">Kisah {artisanName}</h5>
+                       <p className="text-xs text-stone-text/70 dark:text-dark-muted/70 uppercase tracking-widest mt-0.5">Legenda & Dedikasi</p>
+                   </div>
+                </div>
+                <p>
+                  <span className="font-serif text-4xl float-left mr-3 pt-1 text-gold-deep dark:text-gold-neon leading-none">
+                    {artisanName.charAt(0)}
+                  </span>
+                  {artisanName.substring(1)} adalah pengrajin berpengalaman dengan lebih dari <strong>{artisanExperience} tahun dedikasi</strong> dalam melestarikan warisan budaya Indonesia. 
+                  Keahlian dan ketekunan beliau telah menghasilkan karya-karya berkualitas tinggi yang menggabungkan teknik tradisional dengan sentuhan artistik yang unik, berkontribusi pada {product.culturalValue?.toLowerCase() || 'keanekaragaman lokal'}.
+                </p>
+              </motion.div>
             </div>
           </div>
         </div>

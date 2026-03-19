@@ -414,33 +414,37 @@ export const Edutainment = () => {
       icon: <Scale className="w-6 h-6" />,
       title: 'Apa itu Fair Trade?',
       content: 'Fair trade memastikan artisan dan petani menerima kompensasi yang adil, mempromosikan kehidupan sustainable dan praktik produksi ethical.',
-      accent: 'from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright'
+      accent: 'from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright',
+      hoverColor: 'group-hover:text-gold dark:group-hover:text-gold-neon'
     },
     {
       icon: <Search className="w-6 h-6" />,
       title: 'Transparansi Supply Chain',
       content: 'Mengetahui dari mana produk berasal dan bagaimana dibuat menciptakan akuntabilitas dan mendukung komunitas artisan.',
-      accent: 'from-teal to-teal-deep dark:from-teal-neon dark:to-teal-bright'
+      accent: 'from-teal to-teal-deep dark:from-teal-neon dark:to-teal-bright',
+      hoverColor: 'group-hover:text-teal dark:group-hover:text-teal-neon'
     },
     {
       icon: <Landmark className="w-6 h-6" />,
       title: 'Pelestarian Cultural',
       content: 'Kerajinan tradisional membawa warisan budaya. Mendukung artisan membantu melestarikan teknik berabad-abad.',
-      accent: 'from-cat-batik to-cat-weave dark:from-cat-batik-dark dark:to-cat-weave-dark'
+      accent: 'from-cat-batik to-cat-weave dark:from-cat-batik-dark dark:to-cat-weave-dark',
+      hoverColor: 'group-hover:text-cat-batik dark:group-hover:text-cat-batik-dark'
     },
     {
       icon: <Leaf className="w-6 h-6" />,
       title: 'Praktik Sustainable',
       content: 'Banyak UMKM menggunakan bahan alami dan metode eco-friendly, mengurangi dampak lingkungan sambil mempertahankan kualitas.',
-      accent: 'from-teal to-cat-herbal dark:from-teal-neon dark:to-cat-herbal-dark'
+      accent: 'from-teal to-cat-herbal dark:from-teal-neon dark:to-cat-herbal-dark',
+      hoverColor: 'group-hover:text-cat-herbal dark:group-hover:text-cat-herbal-dark'
     }
   ]
 
   const commitments = [
     { icon: <Globe className="w-10 h-10" />, title: 'Komunitas Global', desc: 'Mendukung UMKM di seluruh Indonesia', color: 'text-gold dark:text-gold-neon', bg: 'bg-gold-soft dark:bg-gold-glow-bg', border: 'border-gold/20 dark:border-gold-neon/20' },
-    { icon: <Award className="w-10 h-10" />, title: 'Quality Craftsmanship', desc: 'Melestarikan teknik tradisional', color: 'text-teal dark:text-teal-neon', bg: 'bg-teal-soft dark:bg-teal-glow-bg', border: 'border-teal/20 dark:border-teal-neon/20' },
-    { icon: <Scale className="w-10 h-10" />, title: 'Kompensasi Fair', desc: 'Memastikan artisan mendapat yang layak', color: 'text-cat-batik dark:text-cat-batik-dark', bg: 'bg-purple-50 dark:bg-purple-950/20', border: 'border-cat-batik/20 dark:border-cat-batik-dark/20' },
-    { icon: <Recycle className="w-10 h-10" />, title: 'Produksi Sustainable', desc: 'Praktik eco-friendly dan ethical', color: 'text-cat-herbal dark:text-cat-herbal-dark', bg: 'bg-green-50 dark:bg-green-950/20', border: 'border-cat-herbal/20 dark:border-cat-herbal-dark/20' }
+    { icon: <Award className="w-10 h-10" />, title: 'Quality Craftsmanship', desc: 'Melestarikan teknik tradisional', color: 'text-gold dark:text-gold-neon', bg: 'bg-gold-soft dark:bg-gold-glow-bg', border: 'border-gold/20 dark:border-gold-neon/20' },
+    { icon: <Scale className="w-10 h-10" />, title: 'Kompensasi Fair', desc: 'Memastikan artisan mendapat yang layak', color: 'text-gold dark:text-gold-neon', bg: 'bg-gold-soft dark:bg-gold-glow-bg', border: 'border-gold/20 dark:border-gold-neon/20' },
+    { icon: <Recycle className="w-10 h-10" />, title: 'Produksi Sustainable', desc: 'Praktik eco-friendly dan ethical', color: 'text-gold dark:text-gold-neon', bg: 'bg-gold-soft dark:bg-gold-glow-bg', border: 'border-gold/20 dark:border-gold-neon/20' }
   ]
 
   const containerVariants = {
@@ -538,7 +542,7 @@ export const Edutainment = () => {
               <div className={`w-12 h-12 bg-gradient-to-r ${lesson.accent} text-white rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
                 {lesson.icon}
               </div>
-              <h3 className="text-lg font-serif font-bold text-ink dark:text-dark-heading mb-3 group-hover:text-gold dark:group-hover:text-gold-neon transition-colors">{lesson.title}</h3>
+              <h3 className={`text-lg font-serif font-bold text-ink dark:text-dark-heading mb-3 transition-colors ${lesson.hoverColor}`}>{lesson.title}</h3>
               <p className="text-stone-text dark:text-dark-body leading-relaxed text-sm">{lesson.content}</p>
             </motion.div>
           ))}

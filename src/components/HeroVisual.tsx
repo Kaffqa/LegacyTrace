@@ -37,12 +37,12 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
         <div className="relative w-full h-full min-h-[420px] flex items-center justify-center">
             {/* ── Layered gradient background ── */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold-soft/60 via-teal-soft/30 to-coral-soft/40 dark:from-gold-glow-bg/40 dark:via-teal-glow-bg/20 dark:to-coral-glow-bg/30" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-soft/60 via-gold-soft/40 to-coral-soft/40 dark:from-gold-glow-bg/40 dark:via-gold-glow-bg/20 dark:to-coral-glow-bg/30" />
 
                 {/* Animated gradient orbs */}
                 {/* Single ambient gradient orb (reduced from 3 for performance) */}
                 <motion.div
-                    className="absolute w-48 h-48 rounded-full bg-gradient-to-br from-gold/20 to-teal/10 dark:from-gold-neon/15 dark:to-teal-neon/5 blur-3xl"
+                    className="absolute w-48 h-48 rounded-full bg-gradient-to-br from-gold/20 to-gold-deep/10 dark:from-gold-neon/15 dark:to-gold-bright/5 blur-3xl"
                     style={{ top: '20%', left: '25%', willChange: 'transform' }}
                     animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4] }}
                     transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
@@ -72,7 +72,7 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
 
             {/* Second orbit ring */}
             <motion.div
-                className="absolute rounded-full border border-dashed border-teal/10 dark:border-teal-neon/10"
+                className="absolute rounded-full border border-dashed border-gold/10 dark:border-gold-neon/10"
                 style={{
                     width: orbitRadius * 2 + 60,
                     height: orbitRadius * 2 + 60,
@@ -127,7 +127,7 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
             >
                 {/* Outer glow ring */}
                 <motion.div
-                    className="absolute -inset-6 rounded-full bg-gradient-to-br from-gold/20 to-teal/20 dark:from-gold-neon/15 dark:to-teal-neon/15 blur-xl"
+                    className="absolute -inset-6 rounded-full bg-gradient-to-br from-gold/30 to-gold-deep/20 dark:from-gold-neon/25 dark:to-gold-bright/15 blur-xl"
                     animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                 />
@@ -141,11 +141,11 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
 
                 {/* Main center circle */}
                 <motion.div
-                    className="w-28 h-28 rounded-full bg-gradient-to-br from-gold via-gold-deep to-teal dark:from-gold-neon dark:via-gold-bright dark:to-teal-neon shadow-2xl flex items-center justify-center relative overflow-hidden"
+                    className="w-28 h-28 rounded-full bg-gradient-to-br from-gold via-gold-deep to-gold dark:from-gold-neon dark:via-gold-bright dark:to-gold-neon shadow-2xl flex items-center justify-center relative overflow-hidden"
                     animate={{
                         boxShadow: [
                             '0 0 30px rgba(184,134,11,0.3)',
-                            '0 0 50px rgba(13,148,136,0.3)',
+                            '0 0 50px rgba(184,134,11,0.5)',
                             '0 0 30px rgba(184,134,11,0.3)',
                         ]
                     }}
@@ -213,7 +213,7 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
                         }}
                     >
                         <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gold/15 to-teal/15 dark:from-gold-neon/20 dark:to-teal-neon/20 flex items-center justify-center text-gold dark:text-gold-neon">
+                            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gold/15 to-gold-deep/15 dark:from-gold-neon/20 dark:to-gold-bright/20 flex items-center justify-center text-gold dark:text-gold-neon">
                                 {card.icon}
                             </div>
                             <div>
@@ -242,7 +242,7 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
                 <motion.path
                     d="M 100 340 Q 200 280 300 340"
                     fill="none"
-                    stroke="url(#teal-gradient)"
+                    stroke="url(#gold-gradient-2)"
                     strokeWidth="1"
                     strokeDasharray="6 4"
                     initial={{ pathLength: 0, opacity: 0 }}
@@ -253,10 +253,10 @@ export const HeroVisual = ({ stats }: HeroVisualProps) => {
                 <defs>
                     <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#B8860B" stopOpacity="0.6" />
-                        <stop offset="100%" stopColor="#0D9488" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#DAA520" stopOpacity="0.3" />
                     </linearGradient>
-                    <linearGradient id="teal-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#0D9488" stopOpacity="0.5" />
+                    <linearGradient id="gold-gradient-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#DAA520" stopOpacity="0.5" />
                         <stop offset="100%" stopColor="#B8860B" stopOpacity="0.2" />
                     </linearGradient>
                 </defs>

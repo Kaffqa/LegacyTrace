@@ -110,27 +110,29 @@ export const QuizCard = ({ questions }: QuizCardProps) => {
             {question.options.map((option, idx) => (
               <motion.button
                 key={idx}
-                className={`w-full flex items-center gap-4 p-4 border-2 rounded-lg transition-all duration-250 text-left font-medium ${selected === idx
-                    ? idx === question.correct
-                      ? 'border-teal bg-teal-soft dark:border-teal-neon dark:bg-teal-glow-bg text-ink dark:text-dark-body'
-                      : 'border-red-500 bg-red-500/10 text-ink dark:text-dark-body'
-                    : 'border-stone-100 dark:border-night-border hover:border-gold dark:hover:border-gold-neon bg-pure-card dark:bg-night-card text-ink dark:text-dark-body'
+                className={`w-full flex items-center gap-4 p-4 border-2 rounded-lg transition-all duration-250 text-left font-medium ${
+                    answered && idx === question.correct
+                      ? 'border-[#10b981] bg-[#10b981]/10 dark:border-[#10b981] dark:bg-[#10b981]/20 text-ink dark:text-dark-body'
+                      : answered && selected === idx
+                      ? 'border-red-500 bg-red-500/10 text-ink dark:text-dark-body'
+                      : 'border-stone-100 dark:border-night-border hover:border-gold dark:hover:border-gold-neon bg-pure-card dark:bg-night-card text-ink dark:text-dark-body'
                   }`}
                 onClick={() => !answered && handleAnswer(idx)}
                 whileHover={!answered ? { scale: 1.02 } : {}}
                 whileTap={!answered ? { scale: 0.98 } : {}}
                 disabled={answered}
               >
-                <span className={`w-8 h-8 rounded-full font-bold flex items-center justify-center ${selected === idx
-                    ? idx === question.correct
-                      ? 'bg-teal dark:bg-teal-neon text-white'
-                      : 'bg-red-500 text-white'
-                    : 'bg-gold dark:bg-gold-neon text-white'
+                <span className={`w-8 h-8 rounded-full font-bold flex items-center justify-center ${
+                    answered && idx === question.correct
+                      ? 'bg-[#10b981] text-white'
+                      : answered && selected === idx
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gold dark:bg-gold-neon text-white'
                   }`}>
                   {String.fromCharCode(65 + idx)}
                 </span>
                 <span>{option}</span>
-                {answered && idx === question.correct && <Check className="ml-auto w-6 h-6 text-teal" />}
+                {answered && idx === question.correct && <Check className="ml-auto w-6 h-6 text-[#10b981]" />}
                 {answered && selected === idx && selected !== question.correct && <X className="ml-auto w-6 h-6 text-red-500" />}
               </motion.button>
             ))}

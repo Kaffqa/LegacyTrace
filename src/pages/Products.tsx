@@ -70,14 +70,13 @@ export const Products = () => {
       {/* Filters */}
       <div className="max-w-6xl mx-auto px-8 mb-8 glass rounded-2xl shadow-xl p-8 border border-stone-100/50 dark:border-night-border/50">
         <div className="mb-6">
-          <h3 className="text-lg font-serif font-bold gradient-text mb-4">Kategori</h3>
           <div className="flex flex-wrap gap-3">
             {categories.map(cat => (
               <motion.button
                 key={cat.value}
                 className={`px-5 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${selectedCategory === cat.value
                   ? 'bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night shadow-lg hover:shadow-xl hover:shadow-gold/50 dark:hover:shadow-gold-neon/50'
-                  : 'glass text-ink dark:text-dark-body hover:bg-gradient-to-r hover:from-gold-soft hover:to-teal-soft dark:hover:from-gold-glow-bg dark:hover:to-teal-glow-bg border border-stone-100/50 dark:border-night-border/50'
+                  : 'glass bg-transparent text-ink dark:text-dark-body hover:bg-gold/10 dark:hover:bg-gold-neon/10'
                   }`}
                 onClick={() => {
                   setSelectedCategory(cat.value)
