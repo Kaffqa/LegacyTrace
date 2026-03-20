@@ -1,19 +1,10 @@
 {
-    "builds": [
-        {
-            "src": "api/index.ts",
-            "use": "@vercel/node"
-        },
-        {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
-        }
-    ],
+    "installCommand": "npm install && cd server && npm install",
+    "buildCommand": "cd server && npx prisma generate && cd .. && npm run build",
+    "outputDirectory": "dist",
+    "framework": "vite",
     "rewrites": [
-        { "source": "/api/(.*)", "destination": "/api/index.ts" },
+        { "source": "/api/(.*)", "destination": "/api" },
         { "source": "/(.*)", "destination": "/index.html" }
     ]
 }
