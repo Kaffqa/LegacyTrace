@@ -45,11 +45,9 @@ app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// Only listen when running locally (not on Vercel)
-if (!process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`)
-    })
-}
+// Always listen (Render/Railway Backend)
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`)
+})
 
 export default app
