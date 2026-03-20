@@ -10,7 +10,7 @@ const router = Router()
 // Configure multer for memory storage (no disk write)
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+    limits: { fileSize: 4 * 1024 * 1024 }, // 4MB max (Vercel limit ~4.5MB)
     fileFilter: (_req, file, cb) => {
         const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
         if (allowed.includes(file.mimetype)) {
