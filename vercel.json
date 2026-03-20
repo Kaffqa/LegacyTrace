@@ -1,8 +1,4 @@
 {
-    "installCommand": "npm install && cd server && npm install",
-    "buildCommand": "cd server && npx prisma generate && cd .. && npm run build",
-    "outputDirectory": "dist",
-    "framework": "vite",
     "rewrites": [
         { "source": "/api/(.*)", "destination": "/api" },
         { "source": "/(.*)", "destination": "/index.html" }
