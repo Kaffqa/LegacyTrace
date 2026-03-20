@@ -27,10 +27,11 @@ export const TimelineStep = ({ step, index, isVisible }: TimelineStepProps) => {
             whileHover={{ scale: 1.02 }}
           >
             <div className="text-right">
+              {step.imageUrl && <img src={step.imageUrl} alt={step.title} className="w-full h-32 md:h-48 object-cover rounded-lg mb-4 bg-stone-100 dark:bg-night-card shadow-sm" />}
               <h4 className="text-base md:text-xl font-serif font-bold text-gold dark:text-gold-neon mb-3">{step.title}</h4>
               <p className="text-xs md:text-base text-stone-text dark:text-dark-body font-semibold mb-2 flex items-center gap-2 justify-end"><User className="w-4 h-4" /> {step.actor}</p>
               <p className="text-xs md:text-base text-stone-text dark:text-dark-body font-semibold mb-4 flex items-center gap-2 justify-end"><MapPin className="w-4 h-4" /> {step.location}</p>
-              <p className="text-ink dark:text-dark-body leading-relaxed text-sm md:text-base mb-4">{step.description}</p>
+              <p className="text-ink dark:text-dark-body leading-relaxed text-sm md:text-base mb-4 break-words">{step.description}</p>
             </div>
           </motion.div>
         )}
@@ -43,7 +44,7 @@ export const TimelineStep = ({ step, index, isVisible }: TimelineStepProps) => {
           whileHover={{ scale: 1.2, rotate: 360 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <span className="text-white font-bold text-lg md:text-2xl">{step.icon}</span>
+          <span className="text-white font-bold text-lg md:text-2xl">{step.icon || ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'][index] || index + 1}</span>
         </motion.div>
       </div>
 
@@ -54,10 +55,11 @@ export const TimelineStep = ({ step, index, isVisible }: TimelineStepProps) => {
             className="glass p-5 md:p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 mr-auto max-w-sm md:max-w-lg border border-stone-100/60 dark:border-night-border/60"
             whileHover={{ scale: 1.02 }}
           >
+            {step.imageUrl && <img src={step.imageUrl} alt={step.title} className="w-full h-32 md:h-48 object-cover rounded-lg mb-4 bg-stone-100 dark:bg-night-card shadow-sm" />}
             <h4 className="text-base md:text-xl font-serif font-bold text-gold dark:text-gold-neon mb-3">{step.title}</h4>
             <p className="text-xs md:text-base text-stone-text dark:text-dark-body font-semibold mb-2 flex items-center gap-2"><User className="w-4 h-4" /> {step.actor}</p>
             <p className="text-xs md:text-base text-stone-text dark:text-dark-body font-semibold mb-4 flex items-center gap-2"><MapPin className="w-4 h-4" /> {step.location}</p>
-            <p className="text-ink dark:text-dark-body leading-relaxed text-sm md:text-base mb-4">{step.description}</p>
+            <p className="text-ink dark:text-dark-body leading-relaxed text-sm md:text-base mb-4 break-words">{step.description}</p>
           </motion.div>
         )}
       </div>

@@ -26,6 +26,7 @@ const AdminArtisans = lazy(() => import('./pages/admin/AdminArtisans').then(m =>
 const AdminRegions = lazy(() => import('./pages/admin/AdminRegions').then(m => ({ default: m.AdminRegions })))
 const AdminTeam = lazy(() => import('./pages/admin/AdminTeam').then(m => ({ default: m.AdminTeam })))
 const AdminQuiz = lazy(() => import('./pages/admin/AdminQuiz').then(m => ({ default: m.AdminQuiz })))
+const AdminPartnerships = lazy(() => import('./pages/admin/AdminPartnerships').then(m => ({ default: m.AdminPartnerships })))
 
 // Minimal fallback spinner for lazy-loaded pages
 const PageFallback = () => (
@@ -63,6 +64,7 @@ const AppContent = () => {
               <Route path="regions" element={<AdminRegions />} />
               <Route path="team" element={<AdminTeam />} />
               <Route path="quiz" element={<AdminQuiz />} />
+              <Route path="partnerships" element={<AdminPartnerships />} />
             </Route>
           </Routes>
         </Suspense>

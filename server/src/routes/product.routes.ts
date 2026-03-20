@@ -101,7 +101,15 @@ router.put('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: Res
                 name, description, category, imageUrl,
                 umkm, umkmStory, village, culturalValue,
                 ethicalBadges: ethicalBadges ? normalizeEthicalBadges(ethicalBadges) as any : undefined,
-                artisanId: artisanId ? parseInt(artisanId) : undefined
+                artisanId: artisanId ? parseInt(artisanId) : undefined,
+                supplySteps: req.body.supplySteps ? {
+                    deleteMany: {},
+                    create: req.body.supplySteps.map((s: any, i: number) => ({
+                        title: s.title, actor: s.actor, location: s.location,
+                        description: s.description, icon: s.icon || '', imageUrl: s.imageUrl,
+                        sortOrder: i
+                    }))
+                } : undefined
             },
             include: { artisan: true, supplySteps: true }
         })

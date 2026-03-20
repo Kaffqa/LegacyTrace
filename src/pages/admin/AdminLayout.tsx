@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '../../contexts/AuthContext'
 import {
     LayoutDashboard, Package, Users, MapPin, UserCircle,
-    HelpCircle, LogOut, ChevronRight, Shield, Menu, X
+    HelpCircle, LogOut, ChevronRight, Shield, Menu, X, Handshake
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -14,6 +14,7 @@ const sidebarItems = [
     { label: 'Wilayah', path: '/admin/regions', icon: MapPin },
     { label: 'Tim', path: '/admin/team', icon: UserCircle },
     { label: 'Kuis', path: '/admin/quiz', icon: HelpCircle },
+    { label: 'Kemitraan', path: '/admin/partnerships', icon: Handshake },
 ]
 
 export const AdminLayout = () => {

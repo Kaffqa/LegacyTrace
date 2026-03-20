@@ -5,7 +5,7 @@ import { Package, Plus, Edit2, Trash2, X, Search } from 'lucide-react'
 import { ImageUploader } from '../../components/ImageUploader'
 
 interface Product {
-    id: number; name: string; category: string; village: string; imageUrl: string; description: string; umkm: string; umkmStory: string; culturalValue: string; ethicalBadges: string; artisanId: number | null
+    id: number; name: string; category: string; village: string; imageUrl: string; description: string; umkm: string; umkmStory: string; culturalValue: string; ethicalBadges: string; artisanId: number | null; supplySteps?: any[]
 }
 
 interface Artisan { id: number; name: string }
@@ -17,7 +17,7 @@ export const AdminProducts = () => {
     const [search, setSearch] = useState('')
     const [editing, setEditing] = useState<Product | null>(null)
     const [showForm, setShowForm] = useState(false)
-    const [form, setForm] = useState({ name: '', category: 'batik', village: '', imageUrl: '', description: '', umkm: '', umkmStory: '', culturalValue: '', ethicalBadges: '', artisanId: '' })
+    const [form, setForm] = useState<{name: string, category: string, village: string, imageUrl: string, description: string, umkm: string, umkmStory: string, culturalValue: string, ethicalBadges: string, artisanId: string, supplySteps?: any[]}>({ name: '', category: 'batik', village: '', imageUrl: '', description: '', umkm: '', umkmStory: '', culturalValue: '', ethicalBadges: '', artisanId: '', supplySteps: [] })
 
     const load = () => {
         Promise.all([
@@ -32,13 +32,13 @@ export const AdminProducts = () => {
 
     const openNew = () => {
         setEditing(null)
-        setForm({ name: '', category: 'batik', village: '', imageUrl: '', description: '', umkm: '', umkmStory: '', culturalValue: '', ethicalBadges: '', artisanId: '' })
+        setForm({ name: '', category: 'batik', village: '', imageUrl: '', description: '', umkm: '', umkmStory: '', culturalValue: '', ethicalBadges: '', artisanId: '', supplySteps: [] })
         setShowForm(true)
     }
 
     const openEdit = (p: Product) => {
         setEditing(p)
-        setForm({ name: p.name, category: p.category, village: p.village, imageUrl: p.imageUrl, description: p.description, umkm: p.umkm || '', umkmStory: p.umkmStory || '', culturalValue: p.culturalValue || '', ethicalBadges: p.ethicalBadges || '', artisanId: p.artisanId?.toString() || '' })
+        setForm({ name: p.name, category: p.category, village: p.village, imageUrl: p.imageUrl, description: p.description, umkm: p.umkm || '', umkmStory: p.umkmStory || '', culturalValue: p.culturalValue || '', ethicalBadges: p.ethicalBadges || '', artisanId: p.artisanId?.toString() || '', supplySteps: p.supplySteps || [] })
         setShowForm(true)
     }
 
@@ -225,6 +225,49 @@ export const AdminProducts = () => {
                                         placeholder="Buatan Tangan, Tanpa Pengawet"
                                         className="w-full px-4 py-2.5 rounded-xl bg-warm-sand dark:bg-night-card border border-stone-100 dark:border-night-border text-ink dark:text-dark-heading placeholder-muted-text focus:ring-2 focus:ring-gold/50 dark:focus:ring-gold-neon/50 outline-none text-sm"
                                     />
+                                </div>
+                                <div className="mt-6 pt-6 border-t border-stone-100 dark:border-night-border">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <label className="block text-sm font-medium text-charcoal dark:text-dark-body">Proses Pembuatan (Supply Steps)</label>
+                                        <button type="button" onClick={() => setForm({ ...form, supplySteps: [...(form.supplySteps || []), { title: '', actor: '', location: '', description: '', imageUrl: '' }] })} className="text-xs flex items-center gap-1 text-gold dark:text-gold-neon hover:underline px-2 py-1 rounded bg-gold/10 dark:bg-gold-neon/10"><Plus className="w-3 h-3"/> Tambah Proses</button>
+                                    </div>
+                                    <div className="space-y-4">
+                                        {form.supplySteps?.map((step: any, index: number) => (
+                                            <div key={index} className="p-4 rounded-xl border border-stone-200 dark:border-night-border bg-stone-50/50 dark:bg-night-card/50 relative">
+                                                <button type="button" onClick={() => { const newSteps = [...(form.supplySteps || [])]; newSteps.splice(index, 1); setForm({ ...form, supplySteps: newSteps })}} className="absolute top-2 right-2 p-1.5 text-coral/70 hover:text-coral dark:text-coral-neon/70 dark:hover:text-coral-neon rounded-md hover:bg-coral/10 dark:hover:bg-coral-neon/10 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 pr-8">
+                                                    <div>
+                                                        <label className="block text-xs text-stone-text dark:text-dark-muted mb-1">Nama Proses</label>
+                                                        <input value={step.title} onChange={e => { const newSteps = [...(form.supplySteps || [])]; newSteps[index].title = e.target.value; setForm({ ...form, supplySteps: newSteps })}} className="w-full px-3 py-2 rounded-lg bg-white dark:bg-night-surface border border-stone-200 dark:border-night-border text-ink dark:text-dark-heading text-xs focus:ring-1 focus:ring-gold/50 outline-none" placeholder="Cth: Pewarnaan Alami" />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs text-stone-text dark:text-dark-muted mb-1">Aktor / Pelaku</label>
+                                                        <input value={step.actor} onChange={e => { const newSteps = [...(form.supplySteps || [])]; newSteps[index].actor = e.target.value; setForm({ ...form, supplySteps: newSteps })}} className="w-full px-3 py-2 rounded-lg bg-white dark:bg-night-surface border border-stone-200 dark:border-night-border text-ink dark:text-dark-heading text-xs focus:ring-1 focus:ring-gold/50 outline-none" placeholder="Cth: Kelompok Tani Mekar" />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs text-stone-text dark:text-dark-muted mb-1">Lokasi</label>
+                                                        <input value={step.location} onChange={e => { const newSteps = [...(form.supplySteps || [])]; newSteps[index].location = e.target.value; setForm({ ...form, supplySteps: newSteps })}} className="w-full px-3 py-2 rounded-lg bg-white dark:bg-night-surface border border-stone-200 dark:border-night-border text-ink dark:text-dark-heading text-xs focus:ring-1 focus:ring-gold/50 outline-none" placeholder="Cth: Desa Sukamaju" />
+                                                    </div>
+                                                    <div className="col-span-1 sm:col-span-2 mt-2">
+                                                        <ImageUploader 
+                                                            label="Gambar Proses (Opsional)" 
+                                                            value={step.imageUrl || ''} 
+                                                            onChange={url => { const newSteps = [...(form.supplySteps || [])]; newSteps[index].imageUrl = url; setForm({ ...form, supplySteps: newSteps })}} 
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs text-stone-text dark:text-dark-muted mb-1">Deskripsi Singkat</label>
+                                                    <textarea value={step.description} onChange={e => { const newSteps = [...(form.supplySteps || [])]; newSteps[index].description = e.target.value; setForm({ ...form, supplySteps: newSteps })}} rows={2} className="w-full px-3 py-2 rounded-lg bg-white dark:bg-night-surface border border-stone-200 dark:border-night-border text-ink dark:text-dark-heading text-xs focus:ring-1 focus:ring-gold/50 outline-none resize-none" placeholder="Ceritakan detail tahap ini..." />
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {(!form.supplySteps || form.supplySteps.length === 0) && (
+                                            <div className="text-center py-6 bg-stone-50/50 dark:bg-night-card/50 rounded-xl border border-dashed border-stone-200 dark:border-night-border">
+                                                <p className="text-xs text-stone-text/70 dark:text-dark-muted">Belum ada tahapan proses yang ditambahkan.</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex gap-3 p-6 border-t border-stone-100 dark:border-night-border">

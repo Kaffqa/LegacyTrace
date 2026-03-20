@@ -1,30 +1,38 @@
 import { motion } from 'framer-motion'
 import { Handshake, Package, Send, MapPin } from 'lucide-react'
 import { BackgroundShapes } from '../components/BackgroundShapes'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../lib/api'
 
 export const Partnership = () => {
+  const [submitting, setSubmitting] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
     const formData = new FormData(form)
+    
+    const data = Object.fromEntries(formData.entries())
 
-    // Submit to Formspree
-    fetch('https://formspree.io/f/xojndwjk', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Accept': 'application/json'
-      }
-    }).then(response => {
-      if (response.ok) {
-        alert('Terima kasih! Kami akan segera menghubungi Anda.')
-        form.reset()
-      }
-    })
+    setSubmitting(true)
+    setStatus('idle')
+    try {
+      await api.post('/partnership', data)
+      setStatus('success')
+      form.reset()
+      setTimeout(() => setStatus('idle'), 5000)
+    } catch (err: any) {
+       setStatus('error')
+       setErrorMessage(err.message || 'Terjadi kesalahan saat mengirim pengajuan.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -86,6 +94,19 @@ export const Partnership = () => {
                 />
               </div>
             </div>
+
+            <div>
+               <label className="block text-sm font-semibold text-ink dark:text-dark-heading mb-2">
+                 Nomor WhatsApp *
+               </label>
+               <input
+                 type="tel"
+                 name="whatsapp"
+                 required
+                 className="w-full px-4 py-3 rounded-xl border border-stone-100 dark:border-night-border bg-white dark:bg-night-card text-ink dark:text-dark-heading focus:ring-2 focus:ring-gold dark:focus:ring-gold-neon outline-none transition-all"
+                 placeholder="Contoh: 081234567890"
+               />
+             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -188,14 +209,27 @@ export const Partnership = () => {
               />
             </div>
 
+            {status === 'success' && (
+              <div className="p-4 bg-teal/10 dark:bg-teal-neon/10 text-teal dark:text-teal-neon rounded-xl text-center text-sm font-medium border border-teal/20 dark:border-teal-neon/20">
+                Pendaftaran berhasil dikirim! Tim kami akan segera menghubungi Anda.
+              </div>
+            )}
+            
+            {status === 'error' && (
+              <div className="p-4 bg-coral/10 dark:bg-coral-neon/10 text-coral dark:text-coral-neon rounded-xl text-center text-sm font-medium border border-coral/20 dark:border-coral-neon/20">
+                {errorMessage}
+              </div>
+            )}
+
             <motion.button
               type="submit"
-              className="w-full px-8 py-4 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/50 dark:hover:shadow-gold-neon/50 transition-all duration-250 flex items-center justify-center gap-2 btn-glow"
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={submitting}
+              className="w-full px-8 py-4 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/50 dark:hover:shadow-gold-neon/50 transition-all duration-250 flex items-center justify-center gap-2 btn-glow disabled:opacity-70"
+              whileHover={{ scale: submitting ? 1 : 1.02, y: submitting ? 0 : -2 }}
+              whileTap={{ scale: submitting ? 1 : 0.98 }}
             >
               <Send className="w-5 h-5" />
-              Kirim Pengajuan
+              {submitting ? 'Mengirim...' : 'Kirim Pengajuan'}
             </motion.button>
           </form>
         </motion.div>

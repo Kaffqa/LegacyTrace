@@ -246,7 +246,7 @@ export const Passport = () => {
               </div>
               <h2 className="text-xl font-serif font-bold text-ink dark:text-dark-heading group-hover:text-gold dark:group-hover:text-gold-neon transition-colors">Kisah UMKM</h2>
             </div>
-            <p className="text-stone-text dark:text-dark-body leading-relaxed">{product.umkmStory}</p>
+            <p className="text-stone-text dark:text-dark-body leading-relaxed break-words">{product.umkmStory}</p>
           </motion.div>
 
           {/* Cultural Value */}
@@ -261,7 +261,7 @@ export const Passport = () => {
               </div>
               <h2 className="text-xl font-serif font-bold text-ink dark:text-dark-heading group-hover:text-gold dark:group-hover:text-gold-neon transition-colors">Nilai Budaya</h2>
             </div>
-            <p className="text-stone-text dark:text-dark-body leading-relaxed">{product.culturalValue}</p>
+            <p className="text-stone-text dark:text-dark-body leading-relaxed break-words">{product.culturalValue}</p>
           </motion.div>
         </div>
       </motion.section>
@@ -440,7 +440,7 @@ export const Passport = () => {
 
               {/* Bottom Section: Bio Paragraph */}
               <motion.div 
-                className="prose prose-stone dark:prose-invert max-w-none text-stone-text dark:text-dark-body text-sm lg:text-base leading-relaxed"
+                className="prose prose-stone dark:prose-invert max-w-none text-stone-text dark:text-dark-body text-sm lg:text-base leading-relaxed break-words"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
