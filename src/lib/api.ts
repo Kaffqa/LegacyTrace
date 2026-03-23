@@ -1,5 +1,75 @@
 /// <reference types="vite/client" />
+import { initializeDummyData, getFallbackData, saveFallbackData } from './dummyData'
+
+initializeDummyData()
+
 const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
+
+export const isOfflineMode = { current: false }
+
+const handleFallback = (method: string, path: string, body?: any) => {
+    isOfflineMode.current = true
+    window.dispatchEvent(new CustomEvent('offline-mode-toggled', { detail: true }))
+
+    const db = getFallbackData()
+    console.warn(`[OFFLINE MODE] Intercepted ${method} ${path}`)
+
+    const parts = path.split('/').filter(Boolean)
+    const resource = parts[0]
+    const id = parts[1]
+
+    if (resource === 'auth') {
+        if (path.includes('/me')) return { id: 1, email: 'test@example.com', name: 'Offline Admin', role: 'ADMIN' }
+        return { token: 'offline-token-123', user: { id: 1, email: 'test@example.com', name: 'Offline Admin', role: 'ADMIN' } }
+    }
+
+    if (path.includes('/dashboard/stats') || path === '/stats') {
+        return db.stats || { totalProducts: db.products?.length || 0, totalArtisans: db.artisans?.length || 0, totalRegions: db.regions?.length || 0, totalPartnerships: db.partnership?.length || 0 }
+    }
+
+    if (resource === 'upload') {
+        return { url: 'https://images.unsplash.com/photo-1584556812952-905ffd0c611a?w=400' }
+    }
+
+    if (!db[resource]) {
+        db[resource] = []
+    }
+
+    const table = db[resource]
+
+    switch (method) {
+        case 'GET':
+            if (id) {
+                if (id === 'featured') return table.slice(0, 3)
+                const item = table.find((x: any) => x.id.toString() === id.toString())
+                if (!item) throw new Error(`Fallback: ${resource} not found`)
+                return item
+            }
+            return table
+
+        case 'POST':
+            const newItem = { id: Date.now(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), ...body }
+            table.push(newItem)
+            saveFallbackData(db)
+            return newItem
+
+        case 'PUT':
+        case 'PATCH':
+            const index = table.findIndex((x: any) => x.id.toString() === id?.toString())
+            if (index > -1) {
+                table[index] = { ...table[index], ...body, updatedAt: new Date().toISOString() }
+                saveFallbackData(db)
+                return table[index]
+            }
+            throw new Error(`Fallback: ${resource} not found`)
+
+        case 'DELETE':
+            db[resource] = table.filter((x: any) => x.id.toString() !== id?.toString())
+            saveFallbackData(db)
+            return { success: true }
+    }
+    throw new Error('Fallback not implemented for ' + path)
+}
 
 class ApiClient {
     private getToken(): string | null {
@@ -14,54 +84,52 @@ class ApiClient {
         return h
     }
 
-    async get<T>(path: string): Promise<T> {
-        const res = await fetch(`${API_BASE}${path}`, { headers: this.headers(false) })
-        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
-        return res.json()
+    private async safeFetch<T>(method: string, path: string, body?: unknown, isUpload = false): Promise<T> {
+        try {
+            const options: RequestInit = { method, headers: this.headers(!isUpload) }
+            if (body && !isUpload) options.body = JSON.stringify(body)
+            if (isUpload) options.body = body as BodyInit
+
+            const res = await fetch(`${API_BASE}${path}`, options)
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText)
+            
+            // If success, maybe we were offline and now online? We can toggle it off if we wanted.
+            if (isOfflineMode.current) {
+                isOfflineMode.current = false
+                window.dispatchEvent(new CustomEvent('offline-mode-toggled', { detail: false }))
+            }
+            return res.json()
+        } catch (error) {
+            console.error(`API Call failed: ${method} ${path}`, error)
+            return handleFallback(method, path, body) as T
+        }
     }
 
-    async post<T>(path: string, body?: unknown): Promise<T> {
-        const res = await fetch(`${API_BASE}${path}`, {
-            method: 'POST',
-            headers: this.headers(),
-            body: JSON.stringify(body)
-        })
-        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
-        return res.json()
-    }
-
-    async put<T>(path: string, body?: unknown): Promise<T> {
-        const res = await fetch(`${API_BASE}${path}`, {
-            method: 'PUT',
-            headers: this.headers(),
-            body: JSON.stringify(body)
-        })
-        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
-        return res.json()
-    }
-
-    async delete<T>(path: string): Promise<T> {
-        const res = await fetch(`${API_BASE}${path}`, {
-            method: 'DELETE',
-            headers: this.headers(false)
-        })
-        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
-        return res.json()
-    }
+    get<T>(path: string): Promise<T> { return this.safeFetch('GET', path) }
+    post<T>(path: string, body?: unknown): Promise<T> { return this.safeFetch('POST', path, body) }
+    put<T>(path: string, body?: unknown): Promise<T> { return this.safeFetch('PUT', path, body) }
+    delete<T>(path: string): Promise<T> { return this.safeFetch('DELETE', path) }
 
     async upload(file: File): Promise<{ url: string }> {
         const formData = new FormData()
         formData.append('file', file)
-        const h: HeadersInit = {}
-        const token = this.getToken()
-        if (token) h['Authorization'] = `Bearer ${token}`
-        const res = await fetch(`${API_BASE}/upload`, {
-            method: 'POST',
-            headers: h,
-            body: formData
-        })
-        if (!res.ok) throw new Error((await res.json()).error || res.statusText)
-        return res.json()
+        
+        try {
+            const h: HeadersInit = {}
+            const token = this.getToken()
+            if (token) h['Authorization'] = `Bearer ${token}`
+            
+            const res = await fetch(`${API_BASE}/upload`, { method: 'POST', headers: h, body: formData })
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText)
+            
+            if (isOfflineMode.current) {
+                isOfflineMode.current = false
+                window.dispatchEvent(new CustomEvent('offline-mode-toggled', { detail: false }))
+            }
+            return res.json()
+        } catch (error) {
+            return handleFallback('POST', '/upload', null) as any
+        }
     }
 }
 

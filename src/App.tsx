@@ -7,6 +7,7 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { FloatingMenu } from './components/FloatingMenu'
 import { ScrollToTop } from './components/ScrollToTop'
 import { AuthProvider } from './contexts/AuthContext'
+import { OfflineBadge } from './components/OfflineBadge'
 
 // Lazy-loaded pages (code splitting — only download when visited)
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
@@ -34,7 +35,6 @@ const PageFallback = () => (
     <div className="w-8 h-8 border-3 border-gold/30 border-t-gold dark:border-gold-neon/30 dark:border-t-gold-neon rounded-full animate-spin" />
   </div>
 )
-
 const AppContent = () => {
   const location = useLocation()
   const isAdminPage = location.pathname.startsWith('/admin')
@@ -71,6 +71,7 @@ const AppContent = () => {
       </main>
       {!isAdminPage && <Footer />}
       {!isAdminPage && <FloatingMenu />}
+      <OfflineBadge />
     </>
   )
 }
