@@ -1,4 +1,4 @@
-import app from '../server/src/index';
+import app from '../server/dist/index.js';
 // @ts-ignore
 import serverless from 'serverless-http';
 
