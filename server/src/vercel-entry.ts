@@ -1,4 +1,4 @@
-import app from './_bundle.js';
+import app from './index';
 // @ts-ignore
 import serverless from 'serverless-http';
 

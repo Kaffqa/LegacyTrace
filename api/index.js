@@ -866,6 +866,10 @@ if (!process.env.VERCEL) {
   });
 }
 var index_default = app;
+
+// src/vercel-entry.ts
+import serverless from "serverless-http";
+var vercel_entry_default = serverless(index_default);
 export {
-  index_default as default
+  vercel_entry_default as default
 };
