@@ -3,11 +3,15 @@ import { Handshake, Package, Send, MapPin } from 'lucide-react'
 import { BackgroundShapes } from '../components/BackgroundShapes'
 import { useState, useEffect } from 'react'
 import { api } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
+import { LoginModal } from '../components/LoginModal'
 
 export const Partnership = () => {
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const { user } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -15,6 +19,12 @@ export const Partnership = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!user) {
+      setIsLoginModalOpen(true)
+      return
+    }
+
     const form = e.currentTarget
     const formData = new FormData(form)
     
@@ -245,6 +255,8 @@ export const Partnership = () => {
           </p>
         </motion.div>
       </motion.section>
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Product, Review } from '../types/product'
 import { useAuth } from '../contexts/AuthContext'
 import { TimelineStep } from '../components/TimelineStep'
 import { BackgroundShapes } from '../components/BackgroundShapes'
+import { LoginModal } from '../components/LoginModal'
 import {
   MapPin, Check, BookOpen, Leaf, Hammer, Hand,
   Award, Clock, Quote, Sparkles, ArrowRight, Star, MessageCircle, Pencil
@@ -18,6 +19,7 @@ export const Passport = () => {
   const [loading, setLoading] = useState(true)
   const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set())
   const { user } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   // Rating form state
   const [hoverRating, setHoverRating] = useState(0)
@@ -391,21 +393,37 @@ export const Passport = () => {
 
               {/* Soft WhatsApp CTA */}
               {artisanWhatsapp && (
-                <motion.a
-                  href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full relative group rounded-xl overflow-hidden block"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <div className="absolute inset-0 bg-[#10A37F] opacity-[0.85] group-hover:opacity-100 transition-opacity duration-300 dark:bg-emerald-600" />
-                  <div className="relative flex items-center justify-center gap-2 px-5 py-3 text-white">
-                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
-                    <span className="text-sm font-semibold tracking-wide">Hubungi WhatsApp</span>
-                    <ArrowRight className="w-3 h-3 opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
-                  </div>
-                </motion.a>
+                user ? (
+                  <motion.a
+                    href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full relative group rounded-xl overflow-hidden block"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="absolute inset-0 bg-[#10A37F] opacity-[0.85] group-hover:opacity-100 transition-opacity duration-300 dark:bg-emerald-600" />
+                    <div className="relative flex items-center justify-center gap-2 px-5 py-3 text-white">
+                      <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-semibold tracking-wide">Hubungi WhatsApp</span>
+                      <ArrowRight className="w-3 h-3 opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                    </div>
+                  </motion.a>
+                ) : (
+                  <motion.button
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="w-full relative group rounded-xl overflow-hidden block"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="absolute inset-0 bg-stone-500 opacity-[0.85] group-hover:opacity-100 transition-opacity duration-300 dark:bg-stone-600" />
+                    <div className="relative flex items-center justify-center gap-2 px-5 py-3 text-white">
+                      <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-semibold tracking-wide">Login untuk Pesan</span>
+                      <ArrowRight className="w-3 h-3 opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                    </div>
+                  </motion.button>
+                )
               )}
             </div>
 
@@ -664,6 +682,7 @@ export const Passport = () => {
           QUIZ SECTION
          ═══════════════════════════════════ */}
 
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   )
 }

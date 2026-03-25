@@ -8,6 +8,7 @@ import { FloatingMenu } from './components/FloatingMenu'
 import { ScrollToTop } from './components/ScrollToTop'
 import { AuthProvider } from './contexts/AuthContext'
 import { OfflineBadge } from './components/OfflineBadge'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // Lazy-loaded pages (code splitting — only download when visited)
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
@@ -48,9 +49,9 @@ const AppContent = () => {
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/passport/:productId" element={<Passport />} />
-            <Route path="/edutainment" element={<Edutainment />} />
+            <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+            <Route path="/passport/:productId" element={<ProtectedRoute><Passport /></ProtectedRoute>} />
+            <Route path="/edutainment" element={<ProtectedRoute><Edutainment /></ProtectedRoute>} />
             <Route path="/artisan/:artisanId" element={<ArtisanPage />} />
             <Route path="/team" element={<Team />} />
             <Route path="/regions" element={<Regions />} />

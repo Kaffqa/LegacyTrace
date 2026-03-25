@@ -9,12 +9,31 @@ import {
   Clock, Sparkles, Star, Leaf, Heart, ArrowRight,
   BookOpen, CheckCircle
 } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { LoginModal } from '../components/LoginModal'
 
 export const ArtisanPage = () => {
   const { artisanId } = useParams()
   const navigate = useNavigate()
   const [artisanProducts, setArtisanProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const handleProtectedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault()
+      setIsLoginModalOpen(true)
+    }
+  }
+
+  const handleProtectedAction = (path: string) => {
+    if (!user) {
+      setIsLoginModalOpen(true)
+    } else {
+      navigate(path)
+    }
+  }
 
   useEffect(() => {
     if (!artisanId) { navigate('/products'); return }
@@ -334,7 +353,7 @@ export const ArtisanPage = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Link to={`/passport/${product.id}`}>
+                  <Link to={`/passport/${product.id}`} onClick={handleProtectedClick}>
                     <motion.button
                       className="w-full py-2.5 bg-gradient-to-r from-gold to-gold-deep text-white font-semibold rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg"
                       whileHover={{ scale: 1.02 }}
@@ -375,7 +394,7 @@ export const ArtisanPage = () => {
               Jelajahi lebih banyak produk autentik dari pengrajin berbakat Indonesia
             </p>
             <motion.button
-              onClick={() => navigate('/products')}
+              onClick={() => handleProtectedAction('/products')}
               className="px-8 py-3.5 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-300 flex items-center gap-2 mx-auto btn-glow"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -385,6 +404,8 @@ export const ArtisanPage = () => {
           </div>
         </div>
       </motion.section>
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   )
 }

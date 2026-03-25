@@ -70,6 +70,11 @@ export const Navbar = () => {
   }, [showUserMenu])
 
   const handleNavClick = (e: React.MouseEvent, path: string) => {
+    if (!user && (path.startsWith('/products') || path.startsWith('/edutainment'))) {
+      e.preventDefault()
+      openModal('login')
+      return
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -159,8 +164,8 @@ export const Navbar = () => {
                 {navItems.map((item, idx) => {
                   const isActive = item.isActive(location.pathname)
                   return (
-                    <div key={idx} onClick={(e) => handleNavClick(e, item.path)}>
-                      <Link to={item.path}>
+                    <div key={idx}>
+                      <Link to={item.path} onClick={(e) => handleNavClick(e, item.path)}>
                         <motion.div
                           className="relative pb-1"
                           whileHover={{ scale: 1.05 }}
@@ -299,8 +304,8 @@ export const Navbar = () => {
                 {navItems.map((item, idx) => {
                   const isActive = item.isActive(location.pathname)
                   return (
-                    <div key={idx} onClick={(e) => handleNavClick(e, item.path)}>
-                      <Link to={item.path} onClick={() => setIsOpen(false)}>
+                    <div key={idx}>
+                      <Link to={item.path} onClick={(e) => { handleNavClick(e, item.path); setIsOpen(false); }}>
                         <motion.div
                           className={`px-6 py-4 rounded-lg text-lg font-medium transition-all duration-250 ${isActive
                             ? 'bg-gold-soft dark:bg-gold-glow-bg text-gold dark:text-gold-neon font-bold border-l-4 border-gold dark:border-gold-neon'

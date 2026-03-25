@@ -11,6 +11,8 @@ import {
   Coffee, Leaf, ArrowRight, Map, BookOpen,
   Heart, Handshake, Sparkles, Award, MapPin, Star
 } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { LoginModal } from '../components/LoginModal'
 
 /* ── Animated Counter Hook (rAF-based) ── */
 function useCounter(end: number, durationMs: number = 2000) {
@@ -80,6 +82,15 @@ export const Home = () => {
   const [stats, setStats] = useState<PlatformStats | null>(null)
   const [featuredReviews, setFeaturedReviews] = useState<Review[]>([])
   const [reviewsLoading, setReviewsLoading] = useState(true)
+  const { user } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const handleProtectedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault()
+      setIsLoginModalOpen(true)
+    }
+  }
 
   useEffect(() => {
     api.get<PlatformStats>('/stats').then(setStats).catch(console.error)
@@ -203,7 +214,7 @@ export const Home = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/products">
+              <Link to="/products" onClick={handleProtectedClick}>
                 <motion.button
                   className="px-8 py-4 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-250 flex items-center gap-2 btn-glow"
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -212,7 +223,7 @@ export const Home = () => {
                   Jelajahi Cerita <ArrowRight className="w-5 h-5" />
                 </motion.button>
               </Link>
-              <Link to="/edutainment">
+              <Link to="/edutainment" onClick={handleProtectedClick}>
                 <motion.button
                   className="px-8 py-4 bg-cream dark:bg-night-card text-gold dark:text-gold-neon font-semibold rounded-full border-2 border-gold dark:border-gold-neon shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-250"
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -538,7 +549,7 @@ export const Home = () => {
               Bergabunglah dengan komunitas global yang mendukung perdagangan etis dan seni tradisional Indonesia
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/products">
+              <Link to="/products" onClick={handleProtectedClick}>
                 <motion.button
                   className="px-8 py-4 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-250 btn-glow"
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -547,7 +558,7 @@ export const Home = () => {
                   Mulai Jelajah Sekarang
                 </motion.button>
               </Link>
-              <Link to="/edutainment">
+              <Link to="/edutainment" onClick={handleProtectedClick}>
                 <motion.button
                   className="px-8 py-4 bg-cream dark:bg-night-card text-gold dark:text-gold-neon font-semibold rounded-full border-2 border-gold dark:border-gold-neon shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-250"
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -614,6 +625,7 @@ export const Home = () => {
         </motion.div>
       </motion.section>
 
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   )
 }

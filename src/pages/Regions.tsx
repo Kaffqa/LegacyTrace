@@ -9,11 +9,22 @@ import {
   ArrowRight, Leaf as LeafIcon, Sun, Compass
 } from 'lucide-react'
 import { BackgroundShapes } from '../components/BackgroundShapes'
+import { useAuth } from '../contexts/AuthContext'
+import { LoginModal } from '../components/LoginModal'
 
 export const Regions = () => {
   const [regions, setRegions] = useState<Region[]>([])
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null)
   const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const handleProtectedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault()
+      setIsLoginModalOpen(true)
+    }
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -255,7 +266,7 @@ export const Regions = () => {
           <div className="relative z-10">
             <h2 className="text-3xl font-serif font-bold text-ink dark:text-dark-heading mb-3">Ingin <span className="gradient-text">Mengeksplorasi</span> Lebih Lanjut?</h2>
             <p className="text-lg text-stone-text dark:text-dark-body mb-8">Lihat semua produk dari region pilihan Anda</p>
-            <Link to="/products">
+            <Link to="/products" onClick={handleProtectedClick}>
               <motion.button
                 className="px-8 py-4 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-full shadow-lg hover:shadow-xl hover:shadow-gold/30 dark:hover:shadow-gold-neon/30 transition-all duration-300 flex items-center gap-2 mx-auto btn-glow"
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -267,6 +278,8 @@ export const Regions = () => {
           </div>
         </div>
       </motion.section>
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   )
 }
