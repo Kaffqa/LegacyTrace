@@ -18,7 +18,7 @@ export const Passport = () => {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set())
-  const { user } = useAuth()
+  const { user, isOffline } = useAuth()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   // Rating form state
@@ -393,7 +393,7 @@ export const Passport = () => {
 
               {/* Soft WhatsApp CTA */}
               {artisanWhatsapp && (
-                user ? (
+                user || isOffline ? (
                   <motion.a
                     href={`https://wa.me/${artisanWhatsapp}?text=${encodeURIComponent(`Halo, saya tertarik dengan produk "${product.name}" di LegacyTrace.`)}`}
                     target="_blank"
@@ -624,18 +624,17 @@ export const Passport = () => {
               <p className="text-xs text-stone-text/60 dark:text-dark-muted/60 mt-3 italic">Diedit pada {new Date(userReview!.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
             )}
           </motion.div>
-        ) : !user ? (
+        ) : (!user && !isOffline) ? (
           <div className="glass rounded-2xl p-8 mb-8 text-center border border-stone-100/60 dark:border-night-border/60">
             <p className="text-stone-text dark:text-dark-muted mb-4">Masuk untuk memberikan rating dan ulasan</p>
-            <Link to="/login">
-              <motion.button
-                className="px-6 py-3 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-xl shadow-lg btn-glow"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                Masuk
-              </motion.button>
-            </Link>
+            <motion.button
+              onClick={() => setIsLoginModalOpen(true)}
+              className="px-6 py-3 bg-gradient-to-r from-gold to-gold-deep dark:from-gold-neon dark:to-gold-bright text-white dark:text-night font-semibold rounded-xl shadow-lg btn-glow"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              Masuk
+            </motion.button>
           </div>
         ) : null}
 

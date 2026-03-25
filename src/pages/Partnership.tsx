@@ -10,7 +10,7 @@ export const Partnership = () => {
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const { user } = useAuth()
+  const { user, isOffline } = useAuth()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const Partnership = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (!user) {
+    if (!user && !isOffline) {
       setIsLoginModalOpen(true)
       return
     }

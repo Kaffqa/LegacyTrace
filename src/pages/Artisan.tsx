@@ -17,18 +17,18 @@ export const ArtisanPage = () => {
   const navigate = useNavigate()
   const [artisanProducts, setArtisanProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const { user } = useAuth()
+  const { user, isOffline } = useAuth()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const handleProtectedClick = (e: React.MouseEvent) => {
-    if (!user) {
+    if (!user && !isOffline) {
       e.preventDefault()
       setIsLoginModalOpen(true)
     }
   }
 
   const handleProtectedAction = (path: string) => {
-    if (!user) {
+    if (!user && !isOffline) {
       setIsLoginModalOpen(true)
     } else {
       navigate(path)

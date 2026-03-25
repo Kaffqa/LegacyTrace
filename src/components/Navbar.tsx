@@ -16,7 +16,7 @@ export const Navbar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, login, register, logout, isAdmin } = useAuth()
+  const { user, login, register, logout, isAdmin, isOffline } = useAuth()
 
   // Auth form states
   const [email, setEmail] = useState('')
@@ -70,7 +70,7 @@ export const Navbar = () => {
   }, [showUserMenu])
 
   const handleNavClick = (e: React.MouseEvent, path: string) => {
-    if (!user && (path.startsWith('/products') || path.startsWith('/edutainment'))) {
+    if (!user && !isOffline && (path.startsWith('/products') || path.startsWith('/edutainment'))) {
       e.preventDefault()
       openModal('login')
       return

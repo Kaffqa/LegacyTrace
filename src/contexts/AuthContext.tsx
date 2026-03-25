@@ -15,6 +15,7 @@ interface AuthContextType {
     register: (name: string, email: string, password: string) => Promise<void>
     logout: () => void
     isAdmin: boolean
+    isOffline: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -28,6 +29,13 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isOffline, setIsOffline] = useState(false)
+
+    useEffect(() => {
+        const handleOffline = (e: any) => setIsOffline(e.detail)
+        window.addEventListener('offline-mode-toggled', handleOffline)
+        return () => window.removeEventListener('offline-mode-toggled', handleOffline)
+    }, [])
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -60,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin: user?.role === 'ADMIN' }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin: user?.role === 'ADMIN', isOffline }}>
             {children}
         </AuthContext.Provider>
     )

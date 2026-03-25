@@ -82,11 +82,11 @@ export const Home = () => {
   const [stats, setStats] = useState<PlatformStats | null>(null)
   const [featuredReviews, setFeaturedReviews] = useState<Review[]>([])
   const [reviewsLoading, setReviewsLoading] = useState(true)
-  const { user } = useAuth()
+  const { user, isOffline } = useAuth()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const handleProtectedClick = (e: React.MouseEvent) => {
-    if (!user) {
+    if (!user && !isOffline) {
       e.preventDefault()
       setIsLoginModalOpen(true)
     }
