@@ -12,6 +12,7 @@ import dashboardRoutes from './routes/dashboard.routes'
 import uploadRoutes from './routes/upload.routes'
 import statsRoutes from './routes/stats.routes'
 import partnershipRoutes from './routes/partnership.routes'
+import prisma from './lib/prisma'
 
 dotenv.config()
 
@@ -40,9 +41,32 @@ app.use('/api/upload', uploadRoutes)
 app.use('/api/stats', statsRoutes)
 app.use('/api/partnership', partnershipRoutes)
 
-// Health check
-app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() })
+// Health check with diagnostics
+app.get('/api/health', async (_req, res) => {
+    const envCheck = {
+        DATABASE_URL: !!process.env.DATABASE_URL,
+        DIRECT_URL: !!process.env.DIRECT_URL,
+        JWT_SECRET: !!process.env.JWT_SECRET,
+        CORS_ORIGIN: !!process.env.CORS_ORIGIN,
+        SUPABASE_URL: !!process.env.SUPABASE_URL,
+        SUPABASE_SERVICE_KEY: !!process.env.SUPABASE_SERVICE_KEY,
+        VERCEL: !!process.env.VERCEL,
+    }
+
+    let dbStatus = 'untested'
+    try {
+        await prisma.$queryRaw`SELECT 1`
+        dbStatus = 'connected'
+    } catch (e: any) {
+        dbStatus = `error: ${e.message}`
+    }
+
+    res.json({
+        status: dbStatus === 'connected' ? 'ok' : 'degraded',
+        timestamp: new Date().toISOString(),
+        env: envCheck,
+        db: dbStatus,
+    })
 })
 
 // Only listen if not running on Vercel
