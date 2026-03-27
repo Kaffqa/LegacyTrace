@@ -11,7 +11,14 @@ import jwt2 from "jsonwebtoken";
 // src/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 var globalForPrisma = globalThis;
-var prisma = globalForPrisma.prisma || new PrismaClient();
+var prisma = globalForPrisma.prisma || new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL + (process.env.DATABASE_URL?.includes("?") ? "&" : "?") + "connect_timeout=10&pool_timeout=10",
+    },
+  },
+  log: process.env.NODE_ENV === "production" ? ["error"] : ["query", "error", "warn"],
+});
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 var prisma_default = prisma;
 
