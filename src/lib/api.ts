@@ -85,22 +85,28 @@ class ApiClient {
     }
 
     private async safeFetch<T>(method: string, path: string, body?: unknown, isUpload = false): Promise<T> {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 10_000) // 10s timeout
+
         try {
-            const options: RequestInit = { method, headers: this.headers(!isUpload) }
+            const options: RequestInit = { method, headers: this.headers(!isUpload), signal: controller.signal }
             if (body && !isUpload) options.body = JSON.stringify(body)
             if (isUpload) options.body = body as BodyInit
 
             const res = await fetch(`${API_BASE}${path}`, options)
+            clearTimeout(timeout)
             if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText)
             
-            // If success, maybe we were offline and now online? We can toggle it off if we wanted.
+            // If success, restore online mode
             if (isOfflineMode.current) {
                 isOfflineMode.current = false
                 window.dispatchEvent(new CustomEvent('offline-mode-toggled', { detail: false }))
             }
             return res.json()
-        } catch (error) {
-            console.error(`API Call failed: ${method} ${path}`, error)
+        } catch (error: any) {
+            clearTimeout(timeout)
+            const reason = error?.name === 'AbortError' ? 'Timeout (10s)' : error?.message
+            console.warn(`[API] ${method} ${path} failed (${reason}) → switching to offline mode`)
             return handleFallback(method, path, body) as T
         }
     }
@@ -113,13 +119,17 @@ class ApiClient {
     async upload(file: File): Promise<{ url: string }> {
         const formData = new FormData()
         formData.append('file', file)
+
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 10_000)
         
         try {
             const h: HeadersInit = {}
             const token = this.getToken()
             if (token) h['Authorization'] = `Bearer ${token}`
             
-            const res = await fetch(`${API_BASE}/upload`, { method: 'POST', headers: h, body: formData })
+            const res = await fetch(`${API_BASE}/upload`, { method: 'POST', headers: h, body: formData, signal: controller.signal })
+            clearTimeout(timeout)
             if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText)
             
             if (isOfflineMode.current) {
@@ -128,6 +138,7 @@ class ApiClient {
             }
             return res.json()
         } catch (error) {
+            clearTimeout(timeout)
             return handleFallback('POST', '/upload', null) as any
         }
     }
